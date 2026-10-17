@@ -1,1 +1,70 @@
+# ---------------------------------------------------------------
+# Frontend (Next.js)
+# ---------------------------------------------------------------
 node_modules
+.next/
+out/
+build/
+next-env.d.ts
+.vercel
+*.tsbuildinfo
+
+# ---------------------------------------------------------------
+# Secret & environment (JANGAN pernah di-commit)
+# Hanya file contoh (.env.example) yang boleh masuk repo.
+# ---------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+auth.json
+
+# ---------------------------------------------------------------
+# Backend (Laravel) — aturan detail ada di backend/.gitignore
+# ---------------------------------------------------------------
+backend/vendor/
+backend/node_modules/
+backend/public/build/
+backend/public/hot
+backend/public/storage
+backend/.phpunit.cache/
+backend/.phpunit.result.cache
+backend/bootstrap/cache/*.php
+
+# Database lokal (SQLite dev/test)
+*.sqlite
+*.sqlite-journal
+*.sqlite3
+
+# File upload pengguna (KTM, hasil kerja) & log — data pribadi, tidak boleh masuk repo.
+# Laravel juga menjaga ini lewat .gitignore di dalam backend/storage.
+backend/storage/app/private/**
+!backend/storage/app/private/.gitignore
+backend/storage/app/public/**
+!backend/storage/app/public/.gitignore
+backend/storage/logs/*.log
+
+# ---------------------------------------------------------------
+# Konfigurasi AI assistant lokal (Copilot prompts, Kiro steering/hooks)
+# ---------------------------------------------------------------
+.github/
+.kiro/
+
+# ---------------------------------------------------------------
+# Editor & OS
+# ---------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea
+.fleet
+.zed
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
