@@ -4,7 +4,9 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import ProjectCardMaha from "./ProjectCardMaha";
 import JobCardSkeleton from "./JobCardSkeleton";
 import JobDetailDrawer from "./JobDetailDrawer";
-import { PROJECTS } from "@/lib/mock-data"; // <-- ini baris yang tadi hilang
+import { PROJECTS } from "@/lib/mock-data";
+import { USE_MOCK } from "@/lib/auth/api";
+import { projectsApi } from "@/lib/projects/api";
 
 const PAGE_SIZE = 3;
 
@@ -19,7 +21,17 @@ export default function JobFeed({ activeTab, query = "" }) {
   const [dismissedIds, setDismissedIds] = useState(() => new Set());
   const sentinelRef = useRef(null);
 
-  const hasData = activeTab === "best";
+  // Lowongan asli dari backend (GET /projects, status OPEN). Mode demo tetap memakai data contoh.
+  const [source, setSource] = useState(USE_MOCK ? PROJECTS : null);
+  const [loadError, setLoadError] = useState(null);
+  useEffect(() => {
+    if (USE_MOCK) return;
+    projectsApi.open().then((res) => {
+      if (res.ok) setSource(res.data); else { setLoadError(res.error.message); setSource([]); }
+    });
+  }, []);
+
+  const hasData = activeTab === "best" && source !== null;
 
   // Hasil pencarian dari SearchPanel (lihat components/search/SearchPanel.js)
   // — difilter dulu di sini, baru dipaginasi, supaya "Semua rekomendasi
@@ -31,7 +43,7 @@ export default function JobFeed({ activeTab, query = "" }) {
       const haystack = [p.title, p.umkm, p.category, ...(p.skills || [])].join(" ").toLowerCase();
       return haystack.includes(q);
     });
-  }, [query]);
+  }, [query, source]);
 
   const loadMore = useCallback(() => {
     if (!hasData) return;
@@ -124,7 +136,7 @@ export default function JobFeed({ activeTab, query = "" }) {
 
       {initialLoadDone && hasData && pool.length === 0 && (
         <div className="empty-state">
-          Tidak ada proyek yang cocok dengan &ldquo;{query}&rdquo;.
+          {loadError || (query ? <>Tidak ada proyek yang cocok dengan &ldquo;{query}&rdquo;.</> : "Belum ada proyek terbuka saat ini.")}
         </div>
       )}
 

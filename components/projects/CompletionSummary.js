@@ -10,8 +10,8 @@ const CIRC = 2 * Math.PI * R;
 // buat busurnya. Aktif/Dibatalkan ditampilkan sebagai teks pendukung biasa,
 // SENGAJA tanpa titik warna, supaya nggak kelihatan seperti donut 3 segmen
 // padahal yang digambar cuma satu rasio.
-export default function CompletionSummary() {
-  const projects = getAllProjects();
+export default function CompletionSummary({ projects: projectsProp }) {
+  const projects = projectsProp ?? getAllProjects();
   const selesai = projects.filter((p) => p.status === "selesai").length;
   const aktif = projects.filter((p) => ["berjalan", "menunggu_review", "revisi"].includes(p.status)).length;
   const dibatalkan = projects.filter((p) => p.status === "dibatalkan").length;

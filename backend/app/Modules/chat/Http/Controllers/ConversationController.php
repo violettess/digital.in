@@ -20,7 +20,7 @@ final class ConversationController extends Controller
 
         $conversations = Conversation::query()
             ->where(fn ($q) => $q->where('umkm_user_id', $userId)->orWhere('student_user_id', $userId))
-            ->with('project:id,title')
+            ->with(['project:id,title', 'umkm:id,name', 'student:id,name'])
             ->withCount(['messages as unread_count' => fn ($q) => $q->where('sender_id', '!=', $userId)->whereNull('read_at')])
             ->orderByDesc('updated_at')
             ->paginate(20);

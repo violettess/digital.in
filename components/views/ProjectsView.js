@@ -14,6 +14,8 @@ import RecommendedJobs from "@/components/projects/RecommendedJobs";
 import { STATUS_META, getActiveProjects, getAllProjects, getSavedProjects } from "@/lib/projects.mock";
 import { useRole } from "@/context/RoleContext";
 import { useClientProjects } from "@/context/ProjectsContext";
+import { USE_MOCK } from "@/lib/auth/api";
+import { projectsApi } from "@/lib/projects/api";
 
 // Satu komponen "Proyek" dipakai DUA sudut pandang — bukan dua halaman
 // terpisah:
@@ -66,15 +68,36 @@ function FreelancerProjectsView() {
   const [query, setQuery] = useState(() => searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState(null);
   const [sort, setSort] = useState("terbaru");
-  const [savedIds, setSavedIds] = useState(() => new Set(getSavedProjects().map((p) => p.id)));
+  const [savedIds, setSavedIds] = useState(() => new Set(USE_MOCK ? getSavedProjects().map((p) => p.id) : []));
   const [detailProject, setDetailProject] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [contracts, setContracts] = useState(() => (USE_MOCK ? null : []));
 
-  const raw = useMemo(() => ({
-    aktif: getActiveProjects(),
-    semua: getAllProjects(),
-    disimpan: getSavedProjects(),
-  }), []);
+  const loadContracts = () => {
+    if (USE_MOCK) return;
+    projectsApi.contracts().then((res) => {
+      if (res.ok) setContracts(res.data || []);
+    });
+  };
+
+  useEffect(() => {
+    loadContracts();
+  }, []);
+
+  const raw = useMemo(() => {
+    if (USE_MOCK || contracts === null) {
+      return {
+        aktif: getActiveProjects(),
+        semua: getAllProjects(),
+        disimpan: getSavedProjects(),
+      };
+    }
+    return {
+      aktif: contracts.filter((p) => ["berjalan", "menunggu_review", "revisi"].includes(p.status)),
+      semua: contracts,
+      disimpan: contracts,
+    };
+  }, [contracts]);
 
   const dataByTab = useMemo(() => ({
     aktif: raw.aktif,
@@ -132,7 +155,7 @@ function FreelancerProjectsView() {
     <>
       <h1 className="t-h1 mb-20">Proyek Saya</h1>
 
-      <CompletionSummary />
+      <CompletionSummary projects={raw.semua} />
 
       <ProjectSectionMenu activeTab={tab} onSelectTab={selectTab} dataByTab={dataByTab} />
 
@@ -183,7 +206,7 @@ function FreelancerProjectsView() {
         </div>
       )}
 
-      <ProjectDetailDrawer project={detailProject} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <ProjectDetailDrawer project={detailProject} open={drawerOpen} onClose={() => setDrawerOpen(false)} onUpdated={loadContracts} />
     </>
   );
 }

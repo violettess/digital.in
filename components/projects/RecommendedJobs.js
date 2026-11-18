@@ -1,20 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import JobDetailDrawer from "@/components/dashboard/JobDetailDrawer";
 import { PROJECTS } from "@/lib/mock-data";
+import { USE_MOCK } from "@/lib/auth/api";
+import { projectsApi } from "@/lib/projects/api";
 
-// Kategori yang cocok sama keahlian Nadia (Graphic Designer) — lihat
-// CURRENT_USERS.mahasiswa di lib/users.mock.js. Kebetulan pas 4 lowongan.
 const RECOMMENDED_IDS = ["p1", "p2", "p4", "p6"];
 
-// Dipakai di empty state Proyek Saya — "Lihat Detail" & "Ajukan Lamaran"
-// sama-sama buka JobDetailDrawer yang sudah ada (tombol "Ajukan Proposal"
-// di dalamnya memang masih dummy, konsisten sama pola di seluruh app ini).
 export default function RecommendedJobs() {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
-  const jobs = PROJECTS.filter((p) => RECOMMENDED_IDS.includes(p.id));
+  const [jobs, setJobs] = useState(() => (USE_MOCK ? PROJECTS.filter((p) => RECOMMENDED_IDS.includes(p.id)) : []));
+
+  useEffect(() => {
+    if (USE_MOCK) return;
+    projectsApi.open().then((res) => {
+      if (res.ok) setJobs((res.data || []).slice(0, 4));
+    });
+  }, []);
+
+  if (jobs.length === 0) return null;
 
   function openJob(job) {
     setSelected(job);

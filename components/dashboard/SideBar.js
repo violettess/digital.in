@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@/components/Icon";
 import UserMenuTrigger from "./UserMenuTrigger";
+import NotificationBell from "./NotificationBell";
 import SidebarBrandToggle from "./SidebarBrandToggle";
 import SearchPanel from "@/components/search/SearchPanel";
 import { useSearchPanel } from "@/context/SearchPanelContext";
@@ -48,6 +49,7 @@ const Sidebar = forwardRef(function Sidebar({ id, open, onToggle, navItems, user
       {/* Menu akun dipindah ke sini — atas, sebelum daftar nav — sesuai permintaan */}
       <div style={{ padding: "0 8px 8px", borderBottom: "1px solid var(--border)", marginBottom: 8 }}>
         <UserMenuTrigger user={user} sidebarOpen={open} />
+        <NotificationBell sidebarOpen={open} />
       </div>
 
       <nav

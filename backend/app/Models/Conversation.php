@@ -18,6 +18,16 @@ class Conversation extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
+    public function umkm(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'umkm_user_id');
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'student_user_id');
+    }
+
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class, 'conversation_id');

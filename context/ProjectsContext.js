@@ -1,26 +1,59 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useRole } from "@/context/RoleContext";
+import { projectsApi } from "@/lib/projects/api";
+import { USE_MOCK } from "@/lib/auth/api";
 import { enrichProject } from "@/lib/progress";
 import { MOCK_TODAY } from "@/lib/projects.mock";
 import { umkmProjects } from "@/lib/payments";
 import { applyPostedMilestones } from "@/lib/projects-posting";
 
-// Store proyek milik UMKM yang bisa berubah di sesi ini: proyek baru yang
-// diposting lewat form (`posted`) dan hasil edit milestone pada proyek bawaan
-// (`overrides`: projectId -> daftar milestone). Data bawaan di lib/*.mock.js
-// TIDAK dimodifikasi — useClientProjects() menggabungkannya saat dibaca, dan
-// escrow (lib/escrow.js) tetap membaca data bawaan, jadi angka dana tidak
-// berubah. Dipasang di app/layout.js sebelum ChatProvider (chat juga
-// membutuhkan daftar proyek yang sama).
 const ProjectsContext = createContext(null);
 
 export function ProjectsProvider({ children }) {
+  const { role, status, authUser } = useRole();
   const [posted, setPosted] = useState([]);
   const [overrides, setOverrides] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  // UMKM yang login: proyek diambil dari backend (GET /projects?mine=1) +
+  // kontrak (GET /contracts) supaya info freelancer & status kontrak ikut masuk.
+  const loadMine = useCallback(async () => {
+    if (status !== "authenticated" || role !== "umkm" || !authUser?.name) return;
+    setLoading(true);
+    const [projRes, contractRes] = await Promise.all([
+      projectsApi.mine(authUser.name),
+      projectsApi.contracts(),
+    ]);
+    setLoading(false);
+    if (projRes.ok) {
+      const byProjectId = new Map();
+      if (contractRes.ok) {
+        (contractRes.data || []).forEach((cp) => byProjectId.set(cp.id, cp));
+      }
+      const merged = projRes.data.map((p) => {
+        const c = byProjectId.get(p.id);
+        if (!c) return p;
+        return {
+          ...p,
+          contractId: c.contractId,
+          contractNo: c.contractNo,
+          contractStatus: c.contractStatus,
+          freelancerId: c.freelancerId,
+          freelancerName: c.freelancerName,
+          status: c.status,
+          budget: c.budget || p.budget,
+        };
+      });
+      setPosted(merged);
+    }
+  }, [status, role, authUser?.name]);
+
+  useEffect(() => { loadMine(); }, [loadMine]);
 
   function addProject(raw) {
-    setPosted((list) => [raw, ...list]);
+    setPosted((list) => [raw, ...list.filter((p) => p.id !== raw.id)]);
   }
 
   function saveMilestones(projectId, milestones) {
@@ -31,7 +64,7 @@ export function ProjectsProvider({ children }) {
     }
   }
 
-  const value = useMemo(() => ({ posted, overrides, addProject, saveMilestones }), [posted, overrides]);
+  const value = useMemo(() => ({ posted, overrides, loading, reload: loadMine, addProject, saveMilestones }), [posted, overrides, loading, loadMine]);
   return <ProjectsContext.Provider value={value}>{children}</ProjectsContext.Provider>;
 }
 
@@ -41,18 +74,13 @@ export function useProjects() {
   return ctx;
 }
 
-// Semua proyek milik UMKM ini: yang diposting (paling baru di atas) + proyek
-// bawaan, masing-masing dihitung ulang lewat enrichProject() kalau milestone-
-// nya berubah, jadi progres & status milestone tetap konsisten dengan log
-// event. `includeBase: false` = sembunyikan proyek bawaan (skenario "UMKM
-// baru" di dashboard).
 export function useClientProjects(umkmName, { includeBase = true } = {}) {
   const { posted, overrides } = useProjects();
   return useMemo(() => {
-    const base = includeBase
+    const base = includeBase && USE_MOCK
       ? umkmProjects(umkmName).map((p) => (overrides[p.id] ? enrichProject({ ...p, milestones: overrides[p.id] }, MOCK_TODAY) : p))
       : [];
-    const mine = posted.filter((p) => p.client === umkmName).map((p) => enrichProject(p, MOCK_TODAY));
+    const mine = posted.filter((p) => p.fromApi || p.client === umkmName).map((p) => enrichProject(p, MOCK_TODAY));
     return [...mine, ...base];
   }, [umkmName, includeBase, posted, overrides]);
 }
