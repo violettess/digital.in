@@ -58,12 +58,7 @@ export const ROLES = {
       { href: "/find-talent", label: "Cari Freelancer", icon: "search", permission: "post_project" },
       { href: "/projects", label: "Proyek", icon: "folder", permission: "view_client_projects" },
       { href: "/messages", label: "Pesan", icon: "chat", permission: "use_chat" },
-      { label: "Pembayaran", icon: "wallet", permission: "post_project", children: [
-        { href: "/payments", label: "Ringkasan" },
-        { href: "/payments?tab=riwayat", label: "Riwayat Pembayaran" },
-        { href: "/payments?tab=tertahan", label: "Dana Tertahan" },
-        { href: "/payments?tab=faktur", label: "Faktur" },
-      ] },
+      { href: "/payments", label: "Pembayaran", icon: "wallet", permission: "post_project" },
       { href: "/profile", label: "Profil", icon: "user" },
     ],
     profileFields: [

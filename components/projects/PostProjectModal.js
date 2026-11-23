@@ -6,8 +6,7 @@ import Modal from "@/components/ui/Modal";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { useProjects } from "@/context/ProjectsContext";
 import { projectsApi } from "@/lib/projects/api";
-// Tanggal sungguhan (bukan MOCK_TODAY) karena backend menolak tenggat yang sudah lewat.
-const MOCK_TODAY = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+import { getTodayIso } from "@/lib/format";
 import { enrichProject } from "@/lib/progress";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import {
@@ -24,6 +23,7 @@ const STEPS = ["Info Dasar", "Milestone & Anggaran", "Review & Posting"];
 // ProjectCard yang sama dengan daftar proyek.
 export default function PostProjectModal({ open, onClose, umkmName, onPosted }) {
   const { addProject } = useProjects();
+  const today = getTodayIso();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState(emptyDraft);
   const [touched, setTouched] = useState({ 0: false, 1: false });
@@ -76,7 +76,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
     }
   }, [open]);
 
-  const v = useMemo(() => validateDraft(draft, MOCK_TODAY), [draft]);
+  const v = useMemo(() => validateDraft(draft, today), [draft, today]);
   const touch = () => setTouched((t) => ({ ...t, [step]: true }));
   const set = (patch) => { touch(); setDraft((d) => ({ ...d, ...patch })); };
 
@@ -95,15 +95,15 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
   const removeMilestone = (id) => set({ milestones: draft.milestones.filter((m) => m.id !== id) });
 
   const preview = useMemo(
-    () => (step === 2 && v.ok ? enrichProject(buildPostedProject(draft, umkmName, MOCK_TODAY), MOCK_TODAY) : null),
-    [step, v.ok, draft, umkmName]
+    () => (step === 2 && v.ok ? enrichProject(buildPostedProject(draft, umkmName, today), today) : null),
+    [step, v.ok, draft, umkmName, today]
   );
 
   async function submit() {
     if (!v.ok || saving) return;
     setSaving(true);
     setSubmitError(null);
-    const raw = buildPostedProject(draft, umkmName, MOCK_TODAY);
+    const raw = buildPostedProject(draft, umkmName, today);
     if (!categoryId) {
       setSaving(false);
       setSubmitError("Pilih kategori yang tersedia dari server sebelum mem-post proyek.");
@@ -250,7 +250,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
                     </div>
                     <div className="field" style={{ marginBottom: 0 }}>
                       <label htmlFor={`ms-date-${m.id}`}>Tenggat</label>
-                      <input id={`ms-date-${m.id}`} className="input" type="date" min={MOCK_TODAY} value={m.deadline} onChange={(e) => setMilestone(m.id, { deadline: e.target.value })} />
+                      <input id={`ms-date-${m.id}`} className="input" type="date" min={today} value={m.deadline} onChange={(e) => setMilestone(m.id, { deadline: e.target.value })} />
                       {showErrors && err.deadline && <div className="pp-error" role="alert">{err.deadline}</div>}
                     </div>
                   </div>
