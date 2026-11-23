@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation";
 import UserMenu from "./UserMenu";
 import { initials } from "@/lib/mock-data";
 import { useRole } from "@/context/RoleContext";
-<<<<<<< HEAD
 import { logout } from "@/lib/auth/api";
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 const OPEN_DELAY = 120;
 const CLOSE_DELAY = 150;
@@ -21,16 +18,12 @@ const CLOSE_DELAY = 150;
 // `user` selalu dikirim AppShell (dari RoleContext) — nggak ada lagi
 // default lokal di sini, karena AppShell sendiri udah nahan render sampai
 // role & user-nya siap (lihat components/layout/AppShell.js).
-<<<<<<< HEAD
 //
 // Layar sentuh: hover hanya untuk mouse sungguhan (pointerType "mouse"), jadi ketukan
 // selalu lewat klik; ketukan di luar menu menutupnya (pointerdown).
 // `placement="header"`: tombol avatar di bar atas mobile (AppShell), popup turun ke
 // bawah-kanan dan tidak terpotong drawer.
 export default function UserMenuTrigger({ user, sidebarOpen, placement = "sidebar" }) {
-=======
-export default function UserMenuTrigger({ user, sidebarOpen }) {
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   const [menuOpen, setMenuOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
   const [online, setOnline] = useState(true);
@@ -45,22 +38,14 @@ export default function UserMenuTrigger({ user, sidebarOpen }) {
     if (closeTimer.current) clearTimeout(closeTimer.current);
   };
 
-<<<<<<< HEAD
   const handleMouseEnter = (e) => {
     if (e.pointerType !== "mouse") return;
-=======
-  const handleMouseEnter = () => {
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     clearTimers();
     openTimer.current = setTimeout(() => setMenuOpen(true), OPEN_DELAY);
   };
 
-<<<<<<< HEAD
   const handleMouseLeave = (e) => {
     if (e.pointerType !== "mouse") return;
-=======
-  const handleMouseLeave = () => {
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     clearTimers();
     if (pinned) return; // klik yang buka popup ini, biarkan sampai ditutup eksplisit
     closeTimer.current = setTimeout(() => setMenuOpen(false), CLOSE_DELAY);
@@ -89,33 +74,22 @@ export default function UserMenuTrigger({ user, sidebarOpen }) {
     function onKeyDown(e) {
       if (e.key === "Escape") closeMenu();
     }
-<<<<<<< HEAD
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
-=======
-    document.addEventListener("mousedown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onPointerDown);
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [menuOpen]);
 
   function handleLogout() {
-<<<<<<< HEAD
     // Cabut refresh token di backend (tanpa menunggu) lalu hapus sesi lokal.
     logout();
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     setRole(null);
     closeMenu();
     router.push("/");
   }
 
-<<<<<<< HEAD
   const header = placement === "header";
 
   return (
@@ -128,17 +102,6 @@ export default function UserMenuTrigger({ user, sidebarOpen }) {
       <button
         type="button"
         className={`user-menu-trigger ${header ? "user-menu-trigger--header" : ""}`}
-=======
-  return (
-    <div
-      className="user-menu-trigger-wrap"
-      ref={wrapRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button
-        className="user-menu-trigger"
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         onClick={handleTriggerClick}
         aria-label="Menu akun"
         aria-haspopup="menu"
@@ -147,11 +110,7 @@ export default function UserMenuTrigger({ user, sidebarOpen }) {
         <div className="avatar avatar-sm" style={{ background: user.avatarBg || "var(--primary-light)" }}>
           {initials(user.name)}
         </div>
-<<<<<<< HEAD
        {sidebarOpen && !header && (
-=======
-       {sidebarOpen && (
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             <div style={{ minWidth: 0, overflow: "hidden", textAlign: "left" }}>
                 <div className="t-small" style={{ fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden" }}>
                 {user.name}
@@ -165,10 +124,7 @@ export default function UserMenuTrigger({ user, sidebarOpen }) {
 
       {menuOpen && (
         <UserMenu
-<<<<<<< HEAD
           className={header ? "user-menu--header" : ""}
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           user={user}
           profileMenu={config?.profileMenu}
           showOnlineToggle={config?.features?.onlineToggle}

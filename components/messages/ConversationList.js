@@ -36,11 +36,7 @@ export default function ConversationList({ conversations, activeId, onSelect, qu
           </p>
         ) : (
           conversations.map((c) => {
-<<<<<<< HEAD
             const last = c.messages[c.messages.length - 1] || { from: "them", text: "Belum ada pesan", at: c.updatedAt || MOCK_TODAY };
-=======
-            const last = c.messages[c.messages.length - 1];
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             const isMine = last.from === "me";
             return (
               <button

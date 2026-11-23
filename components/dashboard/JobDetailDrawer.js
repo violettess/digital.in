@@ -4,15 +4,11 @@ import { useEffect, useState } from "react";
 import Drawer from "@/components/ui/Drawer";
 import Icon from "@/components/Icon";
 import JobDetailSkeleton from "./JobDetailSkeleton";
-<<<<<<< HEAD
 import { projectsApi } from "@/lib/projects/api";
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 const FETCH_DELAY_MS = 600; // konsisten dengan delay simulasi di JobFeed
 
 // Drawer generik dari komponen/ui/Drawer, dikombinasikan dengan konten
-<<<<<<< HEAD
 // spesifik "detail proyek".
 export default function JobDetailDrawer({ project, open, onClose }) {
   const [loading, setLoading] = useState(true);
@@ -26,13 +22,6 @@ export default function JobDetailDrawer({ project, open, onClose }) {
   const suggested = project?.suggestedMilestones || [];
   const suggestedTotal = suggested.reduce((s, m) => s + m.amount, 0);
   const [useSuggested, setUseSuggested] = useState(false);
-=======
-// spesifik "detail proyek". Setiap kali `project` berganti, kita simulasikan
-// fetch ulang (skeleton dulu, baru konten) — nanti ini yang diganti query
-// Supabase per-id begitu backend-nya ada.
-export default function JobDetailDrawer({ project, open, onClose }) {
-  const [loading, setLoading] = useState(true);
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   useEffect(() => {
     if (!open || !project) return;
@@ -41,7 +30,6 @@ export default function JobDetailDrawer({ project, open, onClose }) {
     return () => clearTimeout(t);
   }, [open, project?.id]);
 
-<<<<<<< HEAD
   // Form lamaran dikosongkan tiap ganti proyek.
   useEffect(() => {
     setFormOpen(false);
@@ -79,8 +67,6 @@ export default function JobDetailDrawer({ project, open, onClose }) {
     setSent(true);
   }
 
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   return (
     <Drawer open={open} onClose={onClose} title={loading ? "Memuat proyek..." : project?.title}>
       {!project ? null : loading ? (
@@ -124,7 +110,6 @@ export default function JobDetailDrawer({ project, open, onClose }) {
             </div>
           )}
 
-<<<<<<< HEAD
           {suggested.length > 0 && (
             <div className="mt-20">
               <div className="t-caption mb-8">MILESTONE SARAN UMKM</div>
@@ -189,14 +174,6 @@ export default function JobDetailDrawer({ project, open, onClose }) {
                 Ajukan Proposal
               </button>
             )}
-=======
-          <div className="drawer-footer">
-            {/* Belum ada backend lamaran/proposal — tombol ini dummy dulu,
-                sama seperti pola di ApplicantRow. */}
-            <button className="btn btn-primary btn-block btn-lg" onClick={() => alert("Fitur ajukan proposal belum tersedia di prototipe ini")}>
-              Ajukan Proposal
-            </button>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           </div>
         </div>
       )}

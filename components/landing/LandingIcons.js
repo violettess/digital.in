@@ -49,7 +49,6 @@ export const IconClock = make(
   </>
 );
 export const IconMenu = make(<path d="M4 7h16M4 12h16M4 17h16" />);
-<<<<<<< HEAD
 
 // Ikon Lucide (sun, moon, chevron-down) — path-nya disalin dari lucide.dev
 // (lisensi ISC) dengan stroke 2 seperti aslinya, supaya tidak perlu menambah
@@ -64,5 +63,3 @@ export const IconSun = make(
 export const IconMoon = make(<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />, { strokeWidth: 2 });
 export const IconChevronDown = make(<path d="m6 9 6 6 6-6" />, { strokeWidth: 2 });
 export const IconX = make(<path d="M18 6 6 18M6 6l12 12" />, { strokeWidth: 2 });
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99

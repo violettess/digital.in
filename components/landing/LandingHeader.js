@@ -1,17 +1,10 @@
 "use client";
 
-<<<<<<< HEAD
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { LogoMark, Wordmark } from "@/components/brand/Logo";
 import { IconMenu, IconX } from "./LandingIcons";
 import LandingThemeToggle from "./LandingThemeToggle";
-=======
-import { useState } from "react";
-import Link from "next/link";
-import { LogoMark, Wordmark } from "@/components/brand/Logo";
-import { IconMenu } from "./LandingIcons";
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 const LINKS = [
   { label: "Cara Kerja", href: "#cara-kerja" },
@@ -21,7 +14,6 @@ const LINKS = [
 ];
 
 // Logo sama dengan Sidebar Dashboard (LogoMark + Wordmark). "Masuk" → /login
-<<<<<<< HEAD
 // (halaman login yang sudah ada), "Mulai gratis" → /choose-type. Toggle tema
 // (LandingThemeToggle) memakai ThemeContext yang sama dengan Dashboard.
 //
@@ -63,22 +55,12 @@ export default function LandingHeader() {
     <header className="lp-header" ref={headerRef}>
       <div className="lp-x lp-header-in">
         <Link href="/" className="lp-brand" aria-label="Digital.in — beranda">
-=======
-// (halaman login yang sudah ada), "Mulai gratis" → /choose-type.
-export default function LandingHeader() {
-  const [open, setOpen] = useState(false);
-  return (
-    <header className="lp-header">
-      <div className="lp-x lp-header-in">
-        <Link href="/" className="lp-brand" aria-label="Digital.in">
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           <LogoMark size={34} />
           <Wordmark />
         </Link>
         <nav className="lp-nav" aria-label="Navigasi utama">
           {LINKS.map((l) => <a key={l.href} href={l.href}>{l.label}</a>)}
         </nav>
-<<<<<<< HEAD
         {/* Toggle tema selalu tampil (desktop & mobile), di kiri Masuk/Daftar
             atau di kiri tombol hamburger. */}
         <div className="lp-right">
@@ -109,21 +91,6 @@ export default function LandingHeader() {
               <Link href="/choose-type" className="lp-btn lp-btn-lg lp-btn-primary" onClick={close}>Daftar gratis</Link>
             </div>
           </div>
-=======
-        <div className="lp-actions">
-          <Link href="/login" className="lp-login">Masuk</Link>
-          <Link href="/choose-type" className="lp-btn lp-btn-md lp-btn-primary">Mulai gratis</Link>
-        </div>
-        <button type="button" className="lp-burger" onClick={() => setOpen((v) => !v)} aria-label="Buka menu" aria-expanded={open}>
-          <IconMenu />
-        </button>
-      </div>
-      <div className={`lp-mobile ${open ? "open" : ""}`}>
-        <nav aria-label="Navigasi seluler">
-          {LINKS.map((l) => <a key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</a>)}
-          <Link href="/login" className="lp-btn lp-btn-md lp-btn-outline">Masuk</Link>
-          <Link href="/choose-type" className="lp-btn lp-btn-md lp-btn-primary">Mulai gratis</Link>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         </nav>
       </div>
     </header>

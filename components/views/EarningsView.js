@@ -1,10 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-=======
-import { Suspense, useMemo, useState } from "react";
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import { useRouter, useSearchParams } from "next/navigation";
 import EarningsSummary from "@/components/earnings/EarningsSummary";
 import IncomeChart from "@/components/earnings/IncomeChart";
@@ -20,20 +16,9 @@ import {
   buildTransactions, buildInvoices, summarize, monthlyIncome,
   TX_STATUS_META, WD_STATUS_META, INVOICE_STATUS_META,
 } from "@/lib/earnings";
-<<<<<<< HEAD
 import { USE_MOCK } from "@/lib/auth/api";
 import { walletApi, toTransactionRow } from "@/lib/wallet/api";
 
-=======
-
-// Isi persis "Penghasilan" yang sebelumnya app/mahasiswa/earnings/page.js —
-// dipindah ke sini (dipanggil app/earnings/page.js) minus Sidebar/dash-shell,
-// yang sekarang tanggung jawab AppShell. Cuma role freelancer yang boleh
-// buka /earnings (lihat ROUTE_PERMISSIONS, config/roles.js), jadi nggak ada
-// cabang role di dalam sini.
-// useSearchParams wajib dibungkus <Suspense> di App Router — lihat catatan
-// yang sama di app/register/page.js.
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 export default function EarningsView() {
   return (
     <Suspense fallback={null}>
@@ -63,7 +48,6 @@ function EarningsPageInner() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
-<<<<<<< HEAD
   // --- Data asli dari backend (GET /wallet, /wallet/withdrawals, /bank-accounts) ---
   const [apiWallet, setApiWallet] = useState(null);
   const [apiEntries, setApiEntries] = useState([]);
@@ -122,21 +106,6 @@ function EarningsPageInner() {
 
   const todayIso = USE_MOCK ? MOCK_TODAY : new Date().toISOString().slice(0, 10);
   const months = useMemo(() => monthlyIncome(transactions, todayIso, 6), [transactions, todayIso]);
-=======
-  const projects = useMemo(() => getAllProjects(), []);
-  const transactions = useMemo(() => buildTransactions(projects, MOCK_TODAY), [projects]);
-  const invoices = useMemo(() => buildInvoices(transactions, projects), [transactions, projects]);
-
-  const withdrawals = useMemo(
-    () => [...extraWithdrawals, ...WITHDRAWALS]
-      .map((w) => ({ ...w, accountLabel: accountLabel(w.accountId) }))
-      .sort((a, b) => b.date.localeCompare(a.date)),
-    [extraWithdrawals]
-  );
-
-  const summary = useMemo(() => summarize(transactions, withdrawals), [transactions, withdrawals]);
-  const months = useMemo(() => monthlyIncome(transactions, MOCK_TODAY, 6), [transactions]);
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   const dataByTab = { transaksi: transactions, penarikan: withdrawals, faktur: invoices };
 
@@ -151,7 +120,6 @@ function EarningsPageInner() {
     setTimeout(() => setToast(null), 2600);
   }
 
-<<<<<<< HEAD
   async function handleWithdrawSubmit({ amount, accountId }) {
     if (USE_MOCK) {
       const newWithdrawal = {
@@ -179,19 +147,6 @@ function EarningsPageInner() {
     await loadWalletData();
     showToast(`Penarikan ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(amount)} sedang diproses.`);
     return true;
-=======
-  function handleWithdrawSubmit({ amount, accountId }) {
-    const newWithdrawal = {
-      id: `wd-new-${Date.now()}`,
-      date: MOCK_TODAY,
-      amount,
-      accountId,
-      status: "diproses",
-    };
-    setExtraWithdrawals((prev) => [newWithdrawal, ...prev]);
-    setWithdrawOpen(false);
-    showToast(`Penarikan ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(amount)} sedang diproses.`);
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   }
 
   const items = dataByTab[tab];
@@ -202,11 +157,7 @@ function EarningsPageInner() {
     const currentMeta = statusMetaByTab[tab];
     const seen = new Map();
     items.forEach((it) => {
-<<<<<<< HEAD
       if (!seen.has(it.status) && currentMeta[it.status]) seen.set(it.status, currentMeta[it.status].label);
-=======
-      if (!seen.has(it.status)) seen.set(it.status, currentMeta[it.status].label);
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     });
     return [...seen.entries()].map(([id, label]) => ({ id, label }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -297,18 +248,12 @@ function EarningsPageInner() {
       />
       <WithdrawDrawer
         open={withdrawOpen}
-<<<<<<< HEAD
         onClose={() => { setWithdrawOpen(false); setWdError(null); }}
         saldoTersedia={summary.saldoTersedia}
         accounts={USE_MOCK ? SAVED_ACCOUNTS : apiAccounts}
         onSubmit={handleWithdrawSubmit}
         submitting={wdSubmitting}
         externalError={wdError}
-=======
-        onClose={() => setWithdrawOpen(false)}
-        saldoTersedia={summary.saldoTersedia}
-        onSubmit={handleWithdrawSubmit}
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       />
 
       {toast && <div className="toast">{toast}</div>}
