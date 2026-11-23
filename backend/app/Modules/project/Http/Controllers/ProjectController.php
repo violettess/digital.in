@@ -16,7 +16,6 @@ use App\Modules\project\Services\PremiumListingService;
 use App\Modules\project\State\ProjectStateMachine;
 use App\Modules\scheduler\Services\SchedulerPlanner;
 use App\Shared\Database\LikeSearch;
-use App\Shared\Settings\PlatformSettingsService;
 use App\Shared\Database\TransactionRunner;
 use App\Shared\Exceptions\BusinessRuleViolation;
 use App\Shared\Exceptions\InvalidStateTransition;
@@ -32,7 +31,6 @@ final class ProjectController extends Controller
     public function __construct(
         private readonly TransactionRunner $transactions,
         private readonly ProjectStateMachine $stateMachine,
-        private readonly PlatformSettingsService $settings,
     ) {}
 
     /** GET /projects — Login. Selain admin/pemilik, hanya project OPEN yang tampil. */
@@ -260,17 +258,11 @@ final class ProjectController extends Controller
             'deadline' => [$required, 'date', 'after_or_equal:today'],
             'city' => ['sometimes', 'nullable', 'string', 'max:120'],
             // Usulan milestone UMKM (opsional). Hanya saran untuk mahasiswa — bukan milestone kontrak.
-            // Tiap nominal >= min_milestone_amount (platform_settings); total TIDAK wajib sama dengan budget.
+            // Tiap nominal berupa Rupiah integer positif; total TIDAK wajib sama dengan budget.
             'suggested_milestones' => ['sometimes', 'nullable', 'array', 'max:20'],
             'suggested_milestones.*.title' => ['required_with:suggested_milestones', 'string', 'max:255'],
             'suggested_milestones.*.description' => ['nullable', 'string', 'max:2000'],
-            // Setting dibaca saat validasi item (bukan saat menyusun rules) agar request tanpa saran tidak bergantung padanya.
-            'suggested_milestones.*.amount' => ['required_with:suggested_milestones', 'integer', function (string $attribute, mixed $value, \Closure $fail) {
-                $min = $this->settings->int('min_milestone_amount');
-                if ((int) $value < $min) {
-                    $fail("Each suggested milestone must be at least Rp {$min}.");
-                }
-            }],
+            'suggested_milestones.*.amount' => ['required_with:suggested_milestones', 'integer', 'min:1'],
             'suggested_milestones.*.due_date' => ['nullable', 'date', 'after_or_equal:today'],
         ];
     }

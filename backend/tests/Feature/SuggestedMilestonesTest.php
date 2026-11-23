@@ -92,10 +92,18 @@ class SuggestedMilestonesTest extends TestCase
             ->assertJsonPath('data.suggested_milestones', null);
     }
 
-    public function test_suggested_milestone_below_minimum_is_rejected(): void
+    public function test_positive_suggested_milestone_amount_below_old_minimum_is_accepted(): void
     {
         $this->as($this->umkm)->postJson('/api/v1/projects', $this->payload([
-            'suggested_milestones' => [['title' => 'Terlalu kecil', 'amount' => 1000]],
+            'suggested_milestones' => [['title' => 'Nilai kecil', 'amount' => 1]],
+        ]))->assertCreated()
+            ->assertJsonPath('data.suggested_milestones.0.amount', 1);
+    }
+
+    public function test_zero_suggested_milestone_amount_is_rejected(): void
+    {
+        $this->as($this->umkm)->postJson('/api/v1/projects', $this->payload([
+            'suggested_milestones' => [['title' => 'Tanpa nominal', 'amount' => 0]],
         ]))->assertStatus(422)->assertJsonPath('error.code', 'VALIDATION_FAILED');
     }
 

@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(PlatformSettingsSeeder::class);
+        $this->call(ServiceCategorySeeder::class);
         $this->call(UniversitySeeder::class);
     }
 }

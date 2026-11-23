@@ -50,12 +50,6 @@ class DemoDataSeeder extends Seeder
     /** @var array<string, string> slug => id */
     private array $categories = [];
 
-    private const CATEGORIES = [
-        'social-media' => 'Social Media', 'branding' => 'Branding', 'marketplace' => 'Marketplace',
-        'website' => 'Website', 'digital-bookkeeping' => 'Digital Bookkeeping', 'graphic-design' => 'Graphic Design',
-        'data' => 'Data & Spreadsheet', 'video' => 'Video', 'ui-ux' => 'UI/UX', 'copywriting' => 'Copywriting',
-    ];
-
     public function withPassword(string $password): self
     {
         $this->password = $password;
@@ -86,9 +80,11 @@ class DemoDataSeeder extends Seeder
 
     private function seedCategories(): void
     {
+        $this->call(ServiceCategorySeeder::class);
+
         // Data referensi bersama (bukan milik akun demo) — tidak dihapus oleh demo:clear.
-        foreach (self::CATEGORIES as $slug => $name) {
-            $this->categories[$slug] = ServiceCategory::query()->firstOrCreate(['slug' => $slug], ['name' => $name, 'is_active' => true])->id;
+        foreach (ServiceCategorySeeder::CATEGORIES as $slug => $name) {
+            $this->categories[$slug] = ServiceCategory::query()->where('slug', $slug)->value('id');
         }
     }
 

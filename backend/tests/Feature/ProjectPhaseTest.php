@@ -188,10 +188,10 @@ class ProjectPhaseTest extends TestCase
         $this->apply($project, ['offered_price' => 999999])
             ->assertStatus(422)->assertJsonPath('error.code', 'BUSINESS_RULE_VIOLATION');
 
-        $this->apply($project, ['offered_price' => 249999, 'proposed_milestones' => [
-            $this->milestoneInput('Satu', 149999, 3),
-            $this->milestoneInput('Dua', 100000, 6),
-        ]])->assertStatus(422)->assertJsonPath('error.details.min_milestone_amount', 150000);
+        $this->apply($project, ['proposed_milestones' => [
+            $this->milestoneInput('Nominal nol', 0, 3),
+            $this->milestoneInput('Lanjutan', 400000, 6),
+        ]])->assertStatus(422)->assertJsonPath('error.code', 'VALIDATION_FAILED');
 
         $this->apply($project, ['proposed_milestones' => [
             $this->milestoneInput('Satu', 400000, 8),
@@ -210,6 +210,15 @@ class ProjectPhaseTest extends TestCase
 
         $this->apply($project)->assertCreated();
         $this->apply($project)->assertStatus(422);
+    }
+
+    public function test_apply_accepts_positive_milestones_below_the_old_minimum(): void
+    {
+        $this->apply($this->makeProject(), ['offered_price' => 100001, 'proposed_milestones' => [
+            $this->milestoneInput('Satu', 1, 3),
+            $this->milestoneInput('Dua', 100000, 6),
+        ]])->assertCreated()
+            ->assertJsonPath('data.proposed_milestones.0.amount', 1);
     }
 
     public function test_apply_on_non_open_project_is_409_and_wrong_role_is_403(): void
