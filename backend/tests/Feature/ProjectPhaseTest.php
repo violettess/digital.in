@@ -351,11 +351,16 @@ class ProjectPhaseTest extends TestCase
     public function test_contract_listing_and_detail_access(): void
     {
         $project = $this->makeProject();
+        $expectedDeadline = now()->addDays(30)->startOfDay()->format('Y-m-d\TH:i:s.u\Z');
         $applicationId = $this->apply($project)->json('data.id');
         $contractId = $this->as($this->umkm)->postJson("/api/v1/applications/{$applicationId}/accept")->json('data.contract.id');
 
-        $this->as($this->umkm)->getJson('/api/v1/contracts')->assertOk()->assertJsonCount(1, 'data');
-        $this->as($this->student)->getJson('/api/v1/contracts')->assertOk()->assertJsonCount(1, 'data');
+        $this->as($this->umkm)->getJson('/api/v1/contracts')->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.project.deadline', $expectedDeadline);
+        $this->as($this->student)->getJson('/api/v1/contracts')->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.project.deadline', $expectedDeadline);
         $this->as($this->makeStudent())->getJson('/api/v1/contracts')->assertOk()->assertJsonCount(0, 'data');
 
         $this->as($this->student)->getJson("/api/v1/contracts/{$contractId}")
