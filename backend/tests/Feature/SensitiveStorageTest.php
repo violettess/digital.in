@@ -62,14 +62,14 @@ it('configures Supabase Storage (s3) as a private S3-compatible disk', function 
 
 it('reads the s3 endpoint, region, bucket and path-style setting from env', function () {
     $disk = s3DiskConfigWith([
-        'AWS_ENDPOINT' => 'https://example-ref.supabase.co/storage/v1/s3',
+        'AWS_ENDPOINT' => 'https://example-ref.storage.supabase.co/storage/v1/s3',
         'AWS_USE_PATH_STYLE_ENDPOINT' => 'true',
         'AWS_DEFAULT_REGION' => 'ap-southeast-1',
         'AWS_BUCKET' => 'digitalin-private',
     ]);
 
     expect($disk)->toMatchArray([
-        'endpoint' => 'https://example-ref.supabase.co/storage/v1/s3',
+        'endpoint' => 'https://example-ref.storage.supabase.co/storage/v1/s3',
         'use_path_style_endpoint' => true,
         'region' => 'ap-southeast-1',
         'bucket' => 'digitalin-private',

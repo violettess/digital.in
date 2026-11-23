@@ -108,7 +108,7 @@ Saat start, `docker/start.sh` menjalankan berurutan:
 | `AWS_SECRET_ACCESS_KEY` 🔒 | *Secret access key* Supabase dari langkah 2 |
 | `AWS_DEFAULT_REGION` | *Region* dari halaman S3 Connection, salin persis |
 | `AWS_BUCKET` | `digitalin-private` |
-| `AWS_ENDPOINT` | *Endpoint* dari halaman S3 Connection, salin persis (bentuknya `https://<project-ref>.supabase.co/storage/v1/s3`) |
+| `AWS_ENDPOINT` | *Endpoint* dari halaman S3 Connection, salin persis (bentuknya `https://<project-ref>.storage.supabase.co/storage/v1/s3`) |
 | `AWS_USE_PATH_STYLE_ENDPOINT` | `true` (wajib untuk Supabase) |
 | `MAIL_MAILER` | `smtp` (**jangan** `log`; di server OTP email akan ditolak) |
 | `MAIL_SCHEME` | `smtps` untuk port 465, kosongkan untuk 587 |
