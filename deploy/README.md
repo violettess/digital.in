@@ -86,7 +86,7 @@ Gmail (`smtp.gmail.com`, 465, `MAIL_SCHEME=smtps`, App Password) hanya berfungsi
    - `FRONTEND_URL` dan `CORS_ALLOWED_ORIGINS` isi tebakan dulu (`https://<nama-project>.vercel.app`), diperbaiki di langkah 6.
    - Jangan tambahkan `PORT`.
    - Jika Render menolak format: hapus baris komentar (`#`) lalu tempel ulang.
-4. **Deploy Web Service**. Pantau tab **Logs**. Yang diharapkan berurutan: `config:cache`, `migrate --force`, seeder kategori layanan, `universities:import`, Apache start.
+4. **Deploy Web Service**. Pantau tab **Logs**. Yang diharapkan berurutan: `config:cache`, `migrate --force`, seeder default platform settings (tanpa menimpa nilai admin), seeder kategori layanan, `universities:import`, Apache start.
 5. Buka `https://<nama-service>.onrender.com/api/v1/health` → harus `{"data":{"status":"ok"},"meta":[]}`.
 
 Batasan Free: tidur setelah 15 menit tanpa trafik (request pertama ±1 menit); **tanpa Cron Job**, jadi tagihan kedaluwarsa, reminder, dan eskalasi tidak berjalan otomatis. Buka URL health beberapa menit sebelum presentasi agar server sudah bangun.

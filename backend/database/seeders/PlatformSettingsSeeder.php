@@ -50,7 +50,7 @@ class PlatformSettingsSeeder extends Seeder
             ];
         }
 
-        DB::table('platform_settings')->upsert($rows, ['key'], ['value', 'updated_at']);
+        DB::table('platform_settings')->insertOrIgnore($rows);
 
         app(PlatformSettingsService::class)->clearCache();
     }

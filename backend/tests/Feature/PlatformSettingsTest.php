@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PlatformSetting;
 use App\Shared\Settings\PlatformSettingsService;
 use Database\Seeders\PlatformSettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,5 +22,19 @@ class PlatformSettingsTest extends TestCase
             ->and($settings->get('min_milestone_amount'))->toBeNull()
             ->and($settings->get('unknown_setting', 'fallback'))->toBe('fallback')
             ->and($settings->all())->toHaveCount(25);
+    }
+
+    public function test_seeding_restores_missing_defaults_without_overwriting_admin_values(): void
+    {
+        $this->seed(PlatformSettingsSeeder::class);
+        PlatformSetting::query()->whereKey('platform_fee_pct')->update(['value' => 14]);
+        PlatformSetting::query()->whereKey('max_active_contracts_per_student')->delete();
+
+        $this->seed(PlatformSettingsSeeder::class);
+
+        $settings = app(PlatformSettingsService::class);
+
+        expect($settings->number('platform_fee_pct'))->toBe(14.0)
+            ->and($settings->int('max_active_contracts_per_student'))->toBe(2);
     }
 }

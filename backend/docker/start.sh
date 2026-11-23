@@ -18,6 +18,8 @@ fi
 php artisan config:cache
 php artisan route:cache
 php artisan migrate --force
+# Isi platform settings yang belum ada tanpa menimpa nilai yang diatur admin.
+php artisan db:seed --class=PlatformSettingsSeeder --force
 # Kategori adalah data referensi yang dibutuhkan form posting proyek.
 php artisan db:seed --class=ServiceCategorySeeder --force
 # Katalog universitas idempoten: hanya menambah yang belum ada, tidak menimpa data.
