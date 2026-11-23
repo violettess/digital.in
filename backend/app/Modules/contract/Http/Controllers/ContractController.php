@@ -81,7 +81,7 @@ final class ContractController extends Controller
         ]);
 
         $user = $request->user();
-        $query = Contract::query()->with(['project:id,title,category_id', 'umkm:id,name', 'student:id,name'])->withCount('milestones');
+        $query = Contract::query()->with(['project:id,title,category_id,deadline', 'umkm:id,name', 'student:id,name'])->withCount('milestones');
 
         match ($user->role) {
             'UMKM' => $query->where('umkm_id', $user->id),

@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const get = vi.fn();
 const post = vi.fn();
+const put = vi.fn();
 
 vi.mock("@/lib/api", () => ({
-  api: { get: (...a) => get(...a), post: (...a) => post(...a) },
+  api: { get: (...a) => get(...a), post: (...a) => post(...a), put: (...a) => put(...a) },
   parseApiError: (err) => {
     const r = err?.response;
     if (!r) return { status: 0, code: "NETWORK", message: "", details: null };
@@ -23,6 +24,7 @@ const input = { categoryId: "cat-1", title: "Logo", description: "Desain logo", 
 beforeEach(() => {
   get.mockReset();
   post.mockReset();
+  put.mockReset();
 });
 
 describe("projectsApi.categories", () => {
@@ -87,9 +89,87 @@ describe("projectsApi.createAndPublish", () => {
     expect(res.ok).toBe(false);
     expect(res.error.message).toMatch(/belum terverifikasi/i);
   });
+
+  it("dapat membatalkan proyek terbuka milik UMKM", async () => {
+    post.mockResolvedValueOnce({ data: { data: { id: "p-1", status: "CANCELLED" } } });
+
+    const res = await projectsApi.cancelProject("p-1");
+
+    expect(post).toHaveBeenCalledWith("/projects/p-1/cancel");
+    expect(res).toEqual({ ok: true, data: { id: "p-1", status: "CANCELLED" }, meta: {} });
+  });
+
+  it("mengirim perubahan proyek dan milestone saran ke endpoint update", async () => {
+    put.mockResolvedValueOnce({ data: { data: { id: "p-1", title: "Identitas baru" } } });
+
+    const res = await projectsApi.updateProject("p-1", {
+      categoryId: "cat-2",
+      title: "Identitas baru",
+      description: "Desain identitas",
+      budgetMin: 100000,
+      budgetMax: 250000,
+      deadline: "2099-01-10",
+      city: "Bandung",
+      milestones: [{
+        name: "Riset",
+        description: "Riset kebutuhan",
+        amount: "50000",
+        deadline: "2099-01-05",
+      }],
+    });
+
+    expect(put).toHaveBeenCalledWith("/projects/p-1", {
+      category_id: "cat-2",
+      title: "Identitas baru",
+      description: "Desain identitas",
+      budget_min: 100000,
+      budget_max: 250000,
+      deadline: "2099-01-10",
+      city: "Bandung",
+      suggested_milestones: [{
+        title: "Riset",
+        description: "Riset kebutuhan",
+        amount: 50000,
+        due_date: "2099-01-05",
+      }],
+    });
+    expect(res.ok).toBe(true);
+  });
+
+  it("mengirim null untuk menghapus seluruh milestone saran", async () => {
+    put.mockResolvedValueOnce({ data: { data: { id: "p-1" } } });
+
+    await projectsApi.updateProject("p-1", {
+      categoryId: "cat-1",
+      title: "Logo",
+      description: "Desain logo",
+      budgetMin: 100000,
+      budgetMax: 100000,
+      deadline: "2099-01-10",
+      milestones: [],
+    });
+
+    expect(put.mock.calls[0][1].suggested_milestones).toBeNull();
+  });
 });
 
 describe("projectsApi lamaran, kontrak & rating", () => {
+  it("memakai tenggat proyek dari daftar kontrak, bukan tanggal mulai kontrak", async () => {
+    get.mockResolvedValueOnce({
+      data: { data: [{
+        id: "c-1",
+        status: "IN_PROGRESS",
+        created_at: "2026-11-23T10:00:00Z",
+        project: { id: "p-1", title: "Desain Logo", deadline: "2026-12-05" },
+      }] },
+    });
+
+    const res = await projectsApi.contracts();
+
+    expect(res.ok).toBe(true);
+    expect(res.data[0].deadline).toBe("2026-12-05");
+  });
+
   it("mine dan open memetakan daftar proyek", async () => {
     get.mockResolvedValueOnce({
       data: { data: [{ id: "p-1", title: "Menu", status: "OPEN", budget_min: 500000, budget_max: 500000, deadline: "2099-01-01" }] },
@@ -110,6 +190,33 @@ describe("projectsApi lamaran, kontrak & rating", () => {
       proposed_milestones: [{ title: "Penyelesaian proyek", amount: 500000, due_date: "2099-01-01" }],
     });
     expect(res.ok).toBe(true);
+  });
+
+  it("mengirim milestone kustom yang dibuat mahasiswa", async () => {
+    post.mockResolvedValueOnce({ data: { data: { id: "app-2" } } });
+    const milestones = [
+      { name: "Riset", description: "Riset kebutuhan", amount: 80000, deadline: "2099-01-03" },
+      { name: "Desain final", description: "", amount: 120000, deadline: "2099-01-05" },
+    ];
+
+    await projectsApi.apply({
+      projectId: "p-1",
+      proposal: "Saya siap",
+      price: 200000,
+      days: 7,
+      dueDate: "2099-01-05",
+      milestones,
+    });
+
+    expect(post).toHaveBeenCalledWith("/projects/p-1/applications", {
+      proposal: "Saya siap",
+      offered_price: 200000,
+      estimated_days: 7,
+      proposed_milestones: [
+        { title: "Riset", description: "Riset kebutuhan", amount: 80000, due_date: "2099-01-03" },
+        { title: "Desain final", amount: 120000, due_date: "2099-01-05" },
+      ],
+    });
   });
 
   it("rateContract mengirim skor dan target ke /contracts/{id}/ratings", async () => {

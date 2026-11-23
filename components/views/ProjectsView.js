@@ -9,13 +9,15 @@ import ProjectToolbar from "@/components/projects/ProjectToolbar";
 import ProjectCard from "@/components/projects/ProjectCard";
 import ProjectsEmptyState from "@/components/projects/ProjectsEmptyState";
 import ProjectDetailDrawer from "@/components/projects/ProjectDetailDrawer";
+import EditProjectModal from "@/components/projects/EditProjectModal";
 import CompletionSummary from "@/components/projects/CompletionSummary";
 import RecommendedJobs from "@/components/projects/RecommendedJobs";
 import { STATUS_META, getActiveProjects, getAllProjects, getSavedProjects } from "@/lib/projects.mock";
 import { useRole } from "@/context/RoleContext";
-import { useClientProjects } from "@/context/ProjectsContext";
+import { useClientProjects, useProjects } from "@/context/ProjectsContext";
 import { USE_MOCK } from "@/lib/auth/api";
 import { projectsApi } from "@/lib/projects/api";
+import { duplicateOpenProjectIds } from "@/lib/projects/duplicates";
 
 // Satu komponen "Proyek" dipakai DUA sudut pandang — bukan dua halaman
 // terpisah:
@@ -213,6 +215,7 @@ function FreelancerProjectsView() {
 
 function ClientProjectsView() {
   const { user } = useRole();
+  const { reload } = useProjects();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -234,8 +237,14 @@ function ClientProjectsView() {
   const [detailId, setDetailId] = useState(linkedProject?.id || null);
   const [drawerOpen, setDrawerOpen] = useState(!!linkedProject);
   const [postOpen, setPostOpen] = useState(searchParams.get("new") === "1");
+  const [editingProject, setEditingProject] = useState(null);
   const [toast, setToast] = useState(null);
+  const [projectActionError, setProjectActionError] = useState(null);
+  const [busyProjectId, setBusyProjectId] = useState(null);
+  const [cleaningDuplicates, setCleaningDuplicates] = useState(false);
+  const [duplicateCleanupError, setDuplicateCleanupError] = useState(null);
   const detailProject = items.find((p) => p.id === detailId) || null;
+  const duplicateProjectIds = useMemo(() => duplicateOpenProjectIds(items), [items]);
 
   // Bersihkan ?new=1 dari URL setelah modal terbuka, supaya refresh/kembali
   // tidak membuka modalnya lagi.
@@ -252,6 +261,48 @@ function ClientProjectsView() {
   function showToast(msg) {
     setToast(msg);
     setTimeout(() => setToast(null), 2600);
+  }
+
+  async function deleteProject(project) {
+    if (busyProjectId || cleaningDuplicates) return;
+    const confirmed = window.confirm(
+      `Hapus proyek "${project.title}"? Proyek tidak dihapus permanen, tetapi statusnya menjadi dibatalkan. Lamaran dan undangan terbuka untuk proyek ini juga akan ditutup.`
+    );
+    if (!confirmed) return;
+
+    setBusyProjectId(project.id);
+    setProjectActionError(null);
+    const res = await projectsApi.cancelProject(project.id);
+    setBusyProjectId(null);
+    if (!res.ok) {
+      setProjectActionError(res.error.message);
+      return;
+    }
+    await reload();
+    showToast("Proyek dibatalkan dan tidak lagi ditampilkan kepada mahasiswa.");
+  }
+
+  async function cancelDuplicateProjects() {
+    if (cleaningDuplicates || busyProjectId || duplicateProjectIds.length === 0) return;
+    const confirmed = window.confirm(
+      `Batalkan ${duplicateProjectIds.length} posting duplikat yang lebih lama? Proyek akan hilang dari feed mahasiswa, dan lamaran serta undangan terbukanya ikut ditutup. Proyek terbaru tetap dipertahankan.`
+    );
+    if (!confirmed) return;
+
+    setCleaningDuplicates(true);
+    setDuplicateCleanupError(null);
+    const errors = [];
+    for (const projectId of duplicateProjectIds) {
+      const res = await projectsApi.cancelProject(projectId);
+      if (!res.ok) errors.push(res.error.message);
+    }
+    await reload();
+    setCleaningDuplicates(false);
+    if (errors.length > 0) {
+      setDuplicateCleanupError(`Sebagian proyek gagal dibatalkan: ${errors.join("; ")}`);
+    } else {
+      showToast(`${duplicateProjectIds.length} posting duplikat dibatalkan; posting terbaru dipertahankan.`);
+    }
   }
 
   const statusOptions = useMemo(() => {
@@ -293,6 +344,25 @@ function ClientProjectsView() {
         />
       )}
 
+      {duplicateCleanupError && <div className="pp-error mb-16" role="alert">{duplicateCleanupError}</div>}
+      {projectActionError && <div className="pp-error mb-16" role="alert">{projectActionError}</div>}
+
+      {duplicateProjectIds.length > 0 && (
+        <div className="card card-pad mb-16">
+          <div className="row-between" style={{ gap: 12, flexWrap: "wrap" }}>
+            <div>
+              <div className="t-small" style={{ fontWeight: 700 }}>Posting duplikat terdeteksi</div>
+              <p className="t-small muted mt-4">
+                {duplicateProjectIds.length} posting OPEN dengan detail sama. Tindakan ini mempertahankan satu yang terbaru.
+              </p>
+            </div>
+            <button type="button" className="btn btn-secondary btn-sm" disabled={cleaningDuplicates || !!busyProjectId} onClick={cancelDuplicateProjects}>
+              {cleaningDuplicates ? "Membatalkan..." : "Pertahankan terbaru"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {items.length === 0 ? (
         <ProjectsEmptyState
           variant="empty"
@@ -312,7 +382,15 @@ function ClientProjectsView() {
       ) : (
         <div className="job-feed-list">
           {filtered.map((p) => (
-            <ProjectCard key={p.id} project={p} onOpenDetail={openDetail} perspective="client" />
+            <ProjectCard
+              key={p.id}
+              project={p}
+              onOpenDetail={openDetail}
+              perspective="client"
+              onEditProject={setEditingProject}
+              onDeleteProject={deleteProject}
+              actionsDisabled={!!busyProjectId || cleaningDuplicates}
+            />
           ))}
         </div>
       )}
@@ -324,6 +402,16 @@ function ClientProjectsView() {
         onClose={() => setPostOpen(false)}
         umkmName={user.name}
         onPosted={() => showToast("Proyek berhasil diposting")}
+      />
+
+      <EditProjectModal
+        open={!!editingProject}
+        project={editingProject}
+        onClose={() => setEditingProject(null)}
+        onUpdated={() => {
+          reload();
+          showToast("Proyek berhasil diperbarui.");
+        }}
       />
 
       {toast && <div className="toast">{toast}</div>}

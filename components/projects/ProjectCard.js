@@ -20,7 +20,16 @@ const ACTIVE_NOTES = {
 // `perspective="client"` dipakai sudut pandang UMKM (lihat ProjectsView) —
 // baris info nunjukkin nama FREELANCER (bukan klien, yang notabene UMKM itu
 // sendiri), dan nggak ada tombol simpan (UMKM nggak "nyimpen" proyek sendiri).
-export default function ProjectCard({ project: p, onOpenDetail, isSaved, onToggleSave, perspective = "freelancer" }) {
+export default function ProjectCard({
+  project: p,
+  onOpenDetail,
+  isSaved,
+  onToggleSave,
+  perspective = "freelancer",
+  onEditProject,
+  onDeleteProject,
+  actionsDisabled = false,
+}) {
   const { openWidget } = useChat();
   const meta = STATUS_META[p.status];
   const isActive = p.status in ACTIVE_NOTES;
@@ -68,6 +77,30 @@ export default function ProjectCard({ project: p, onOpenDetail, isSaved, onToggl
               <Icon name={isSaved ? "bookmarkFilled" : "bookmark"} />
             </button>
           )}
+          {isClientView && p.fromApi && p.status === "terbuka" && (
+            <>
+              <button
+                type="button"
+                className="icon-circle-btn"
+                disabled={actionsDisabled}
+                onClick={(e) => { e.stopPropagation(); onEditProject?.(p); }}
+                aria-label={`Edit proyek ${p.title}`}
+                data-tooltip="Edit proyek"
+              >
+                <Icon name="pencil" />
+              </button>
+              <button
+                type="button"
+                className="icon-circle-btn danger"
+                disabled={actionsDisabled}
+                onClick={(e) => { e.stopPropagation(); onDeleteProject?.(p); }}
+                aria-label={`Hapus proyek ${p.title}`}
+                data-tooltip="Hapus proyek"
+              >
+                <Icon name="trash" />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -97,9 +130,9 @@ export default function ProjectCard({ project: p, onOpenDetail, isSaved, onToggl
         {p.status === "dibatalkan" && (
           <>
             <span className="job-item-status-note">
-              <Icon name="xCircle" /> Dibatalkan klien · terhenti di {p.progress}%
+              <Icon name="xCircle" /> {isClientView ? "Proyek dibatalkan" : `Dibatalkan klien · terhenti di ${p.progress}%`}
             </span>
-            <ProgressHistoryPopover project={p} variant="link" />
+            {!isClientView && <ProgressHistoryPopover project={p} variant="link" />}
           </>
         )}
         {p.status === "terbuka" && (

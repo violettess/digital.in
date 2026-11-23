@@ -22,7 +22,7 @@ const STEPS = ["Info Dasar", "Milestone & Anggaran", "Review & Posting"];
 // posting.js) dan disimpan ke ProjectsContext; preview di langkah 3 memakai
 // ProjectCard yang sama dengan daftar proyek.
 export default function PostProjectModal({ open, onClose, umkmName, onPosted }) {
-  const { addProject } = useProjects();
+  const { addProject, posted } = useProjects();
   const today = getTodayIso();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState(emptyDraft);
@@ -35,6 +35,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
   const [categoryRequest, setCategoryRequest] = useState(0);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [duplicateConfirm, setDuplicateConfirm] = useState(false);
 
   // Kategori dari backend (id uuid dibutuhkan POST /projects).
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
     if (open) {
       setSubmitError(null);
       setSaving(false);
+      setDuplicateConfirm(false);
       setStep(0);
       setDraft(emptyDraft());
       setTouched({ 0: false, 1: false });
@@ -78,7 +80,11 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
 
   const v = useMemo(() => validateDraft(draft, today), [draft, today]);
   const touch = () => setTouched((t) => ({ ...t, [step]: true }));
-  const set = (patch) => { touch(); setDraft((d) => ({ ...d, ...patch })); };
+  const set = (patch) => {
+    touch();
+    setDuplicateConfirm(false);
+    setDraft((d) => ({ ...d, ...patch }));
+  };
 
   function toggleSkill(skill) {
     set({ skills: draft.skills.includes(skill) ? draft.skills.filter((s) => s !== skill) : [...draft.skills, skill] });
@@ -109,6 +115,19 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
       setSubmitError("Pilih kategori yang tersedia dari server sebelum mem-post proyek.");
       return;
     }
+    const duplicateExists = posted.some((project) => project.fromApi
+      && project.status === "terbuka"
+      && project.title.trim().toLocaleLowerCase() === raw.title.toLocaleLowerCase()
+      && project.category === raw.category
+      && project.description === raw.description
+      && project.budget === raw.budget
+      && project.deadline === raw.deadline);
+    if (duplicateExists && !duplicateConfirm) {
+      setSaving(false);
+      setDuplicateConfirm(true);
+      setSubmitError("Ada proyek terbuka dengan detail yang sama. Periksa proyek tersebut, atau klik tombol lagi jika memang ingin membuat proyek serupa.");
+      return;
+    }
     const res = await projectsApi.createAndPublish({
       categoryId,
       title: raw.title,
@@ -122,7 +141,18 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
       setSubmitError(res.error.message);
       return;
     }
-    const project = { ...raw, id: res.data.id };
+    const publishedAt = res.data.published_at || new Date().toISOString();
+    const project = {
+      ...raw,
+      id: res.data.id,
+      fromApi: true,
+      categoryId,
+      budgetMin: raw.budget,
+      budgetMax: raw.budget,
+      city: "",
+      createdAt: res.data.created_at || publishedAt,
+      publishedAt,
+    };
     addProject(project);
     onPosted?.(project);
     onClose();
@@ -307,7 +337,9 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
         {step < 2 ? (
           <button type="button" className="btn btn-primary" disabled={!canNext} onClick={() => setStep((s) => s + 1)}>Berikutnya</button>
         ) : (
-          <button type="button" className="btn btn-primary" disabled={!v.ok || saving} onClick={submit}>{saving ? "Menyimpan..." : "Posting Proyek"}</button>
+          <button type="button" className="btn btn-primary" disabled={!v.ok || saving} onClick={submit}>
+            {saving ? "Menyimpan..." : duplicateConfirm ? "Tetap Posting Duplikat" : "Posting Proyek"}
+          </button>
         )}
       </div>
     </Modal>
