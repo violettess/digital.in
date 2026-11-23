@@ -20,6 +20,10 @@ export default function JobFeed({ activeTab, query = "" }) {
   const [savedIds, setSavedIds] = useState(() => new Set());
   const [dismissedIds, setDismissedIds] = useState(() => new Set());
   const sentinelRef = useRef(null);
+  const loadTimeoutRef = useRef(null);
+  const loadingMoreRef = useRef(false);
+  const pageRef = useRef(0);
+  const generationRef = useRef(0);
 
   // Lowongan asli dari backend (GET /projects, status OPEN). Mode demo tetap memakai data contoh.
   const [source, setSource] = useState(USE_MOCK ? PROJECTS : null);
@@ -46,35 +50,59 @@ export default function JobFeed({ activeTab, query = "" }) {
     });
   }, [query, source]);
 
-  const loadMore = useCallback(() => {
-    if (!hasData) return;
-    const start = page * PAGE_SIZE;
+  const loadMore = useCallback((requestedPage = pageRef.current, generation = generationRef.current) => {
+    if (!hasData || loadingMoreRef.current) return;
+    const start = requestedPage * PAGE_SIZE;
     if (start >= pool.length) return;
+    loadingMoreRef.current = true;
     setLoading(true);
-    setTimeout(() => {
-      setItems((prev) => [...prev, ...pool.slice(start, start + PAGE_SIZE)]);
-      setPage((p) => p + 1);
+    loadTimeoutRef.current = setTimeout(() => {
+      if (generation !== generationRef.current) return;
+      const nextItems = pool.slice(start, start + PAGE_SIZE);
+      setItems((prev) => {
+        const existingIds = new Set(prev.map((item) => item.id));
+        const uniqueItems = nextItems.filter((item) => {
+          if (existingIds.has(item.id)) return false;
+          existingIds.add(item.id);
+          return true;
+        });
+        return [...prev, ...uniqueItems];
+      });
+      pageRef.current = requestedPage + 1;
+      setPage(pageRef.current);
       setLoading(false);
       setInitialLoadDone(true);
+      loadingMoreRef.current = false;
+      loadTimeoutRef.current = null;
     }, 600);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, hasData, pool]);
+  }, [hasData, pool]);
 
   useEffect(() => {
+    if (loadTimeoutRef.current) clearTimeout(loadTimeoutRef.current);
+    const generation = ++generationRef.current;
+    loadingMoreRef.current = false;
+    pageRef.current = 0;
     setItems([]);
     setPage(0);
     setInitialLoadDone(false);
     setLoading(true);
 
-    if (hasData) {
-      loadMore();
+    if (hasData && pool.length > 0) {
+      loadMore(0, generation);
+    } else if (hasData) {
+      setLoading(false);
+      setInitialLoadDone(true);
     } else {
-      const t = setTimeout(() => {
+      loadTimeoutRef.current = setTimeout(() => {
         setLoading(false);
         setInitialLoadDone(true);
       }, 600);
-      return () => clearTimeout(t);
     }
+    return () => {
+      if (loadTimeoutRef.current) clearTimeout(loadTimeoutRef.current);
+      if (generationRef.current === generation) generationRef.current += 1;
+      loadingMoreRef.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, pool]);
 
@@ -87,7 +115,7 @@ export default function JobFeed({ activeTab, query = "" }) {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [loadMore]);
+  }, [loadMore, page]);
 
   const hasMore = hasData && page * PAGE_SIZE < pool.length;
 

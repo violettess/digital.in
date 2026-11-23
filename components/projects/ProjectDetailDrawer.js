@@ -213,6 +213,27 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
                           Penawaran: <b>{formatRupiah(app.offered_price)}</b> · Estimasi {app.estimated_days} hari
                         </div>
                         {app.proposal && <p className="t-small muted mt-6">{app.proposal}</p>}
+                        {Array.isArray(app.proposed_milestones) && app.proposed_milestones.length > 0 && (
+                          <details className="mt-12">
+                            <summary className="t-small" style={{ cursor: "pointer", fontWeight: 600 }}>
+                              Rincian milestone ({app.proposed_milestones.length})
+                            </summary>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10 }}>
+                              {app.proposed_milestones.map((milestone, index) => (
+                                <div key={`${app.id}-milestone-${index}`} className="card card-pad" style={{ padding: 10 }}>
+                                  <div className="row-between" style={{ gap: 8 }}>
+                                    <span className="t-small" style={{ fontWeight: 600 }}>
+                                      {index + 1}. {milestone.title || `Milestone ${index + 1}`}
+                                    </span>
+                                    <span className="t-small" style={{ fontWeight: 600 }}>{formatRupiah(milestone.amount)}</span>
+                                  </div>
+                                  {milestone.description && <p className="t-caption muted mt-4">{milestone.description}</p>}
+                                  <div className="t-caption muted mt-4">Tenggat: {formatTanggal(milestone.due_date)}</div>
+                                </div>
+                              ))}
+                            </div>
+                          </details>
+                        )}
                         {isPending && project.status === "terbuka" && (
                           <div className="row gap-8 mt-12">
                             <button
