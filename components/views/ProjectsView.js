@@ -14,8 +14,11 @@ import RecommendedJobs from "@/components/projects/RecommendedJobs";
 import { STATUS_META, getActiveProjects, getAllProjects, getSavedProjects } from "@/lib/projects.mock";
 import { useRole } from "@/context/RoleContext";
 import { useClientProjects } from "@/context/ProjectsContext";
+<<<<<<< HEAD
 import { USE_MOCK } from "@/lib/auth/api";
 import { projectsApi } from "@/lib/projects/api";
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 // Satu komponen "Proyek" dipakai DUA sudut pandang — bukan dua halaman
 // terpisah:
@@ -68,6 +71,7 @@ function FreelancerProjectsView() {
   const [query, setQuery] = useState(() => searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState(null);
   const [sort, setSort] = useState("terbaru");
+<<<<<<< HEAD
   const [savedIds, setSavedIds] = useState(() => new Set(USE_MOCK ? getSavedProjects().map((p) => p.id) : []));
   const [detailProject, setDetailProject] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -98,6 +102,17 @@ function FreelancerProjectsView() {
       disimpan: contracts,
     };
   }, [contracts]);
+=======
+  const [savedIds, setSavedIds] = useState(() => new Set(getSavedProjects().map((p) => p.id)));
+  const [detailProject, setDetailProject] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const raw = useMemo(() => ({
+    aktif: getActiveProjects(),
+    semua: getAllProjects(),
+    disimpan: getSavedProjects(),
+  }), []);
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   const dataByTab = useMemo(() => ({
     aktif: raw.aktif,
@@ -155,7 +170,11 @@ function FreelancerProjectsView() {
     <>
       <h1 className="t-h1 mb-20">Proyek Saya</h1>
 
+<<<<<<< HEAD
       <CompletionSummary projects={raw.semua} />
+=======
+      <CompletionSummary />
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
       <ProjectSectionMenu activeTab={tab} onSelectTab={selectTab} dataByTab={dataByTab} />
 
@@ -206,7 +225,11 @@ function FreelancerProjectsView() {
         </div>
       )}
 
+<<<<<<< HEAD
       <ProjectDetailDrawer project={detailProject} open={drawerOpen} onClose={() => setDrawerOpen(false)} onUpdated={loadContracts} />
+=======
+      <ProjectDetailDrawer project={detailProject} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     </>
   );
 }

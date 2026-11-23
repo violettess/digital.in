@@ -1,15 +1,22 @@
 "use client";
 
+<<<<<<< HEAD
 import { Suspense, useEffect, useState } from "react";
+=======
+import { Suspense, useState } from "react";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import { useRouter, useSearchParams } from "next/navigation";
 import JobTabs from "@/components/dashboard/JobTabs";
 import JobFeed from "@/components/dashboard/JobFeed";
 import ProfileSidePanel from "@/components/dashboard/ProfileSidePanel";
 import Icon from "@/components/Icon";
 import { useSearchPanel } from "@/context/SearchPanelContext";
+<<<<<<< HEAD
 import { projectsApi } from "@/lib/projects/api";
 import { USE_MOCK } from "@/lib/auth/api";
 import { formatRupiah, formatTanggal } from "@/lib/format";
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 // Isi persis "Cari Proyek" yang sebelumnya ada di app/mahasiswa/dashboard —
 // cuma dipindah dari page.js ke sini (dipanggil lewat app/dashboard/page.js)
@@ -29,6 +36,7 @@ function FreelancerDashboardView() {
   const query = searchParams.get("q") || "";
   const [activeTab, setActiveTab] = useState("best");
   const { openSearch } = useSearchPanel();
+<<<<<<< HEAD
   const [invitations, setInvitations] = useState([]);
   const [invitationBusy, setInvitationBusy] = useState(null);
   const [invitationError, setInvitationError] = useState(null);
@@ -51,11 +59,14 @@ function FreelancerDashboardView() {
     if (!res.ok) return setInvitationError(res.error.message);
     setInvitations((list) => list.filter((item) => item.id !== invitationId));
   }
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   return (
     <>
       <h1 className="t-h1 mb-16">Cari Proyek</h1>
 
+<<<<<<< HEAD
       {!USE_MOCK && invitations.length > 0 && (
         <div className="card card-pad mb-16">
           <div className="t-caption mb-8">UNDANGAN PROYEK</div>
@@ -99,6 +110,8 @@ function FreelancerDashboardView() {
         </div>
       )}
 
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       <button
         type="button"
         className="search-trigger-input mb-16"

@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< HEAD
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,10 +15,18 @@ import useFocusTrap from "@/components/ui/useFocusTrap";
 import { navFor, ROLES } from "@/config/roles";
 import { useRole } from "@/context/RoleContext";
 import { isPendingUser, pendingCanOpen } from "@/lib/auth/pending";
+=======
+import { useState } from "react";
+import Sidebar from "@/components/dashboard/SideBar";
+import RoleGuard from "./RoleGuard";
+import { navFor } from "@/config/roles";
+import { useRole } from "@/context/RoleContext";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 // Shell tunggal buat semua role: sidebar (menu dari navFor(role), user dari
 // context) + canvas konten, dibungkus RoleGuard supaya halaman yang nggak
 // boleh diakses role aktif otomatis ketutup pesan "Tidak memiliki akses"
+<<<<<<< HEAD
 // tanpa tiap halaman ngecek sendiri-sendiri.
 //
 // Responsif (CSS di globals.css bagian 41):
@@ -79,12 +88,30 @@ export default function AppShell({ children, aside, bare = false }) {
   }, [isMobile, mobileNavOpen]);
 
   if (!signedIn) return <SessionLoading />;
+=======
+// tanpa tiap halaman ngecek sendiri-sendiri. State `sidebarOpen` sekarang
+// hidup DI SINI — dulu diulang di tiap page.js.
+//
+// Drawer/toast milik satu halaman TETAP dirender di page.js masing-masing,
+// sebagai sibling <AppShell> (sama seperti pola dash-shell lama), bukan
+// lewat AppShell — soalnya isinya beda-beda tiap halaman dan posisinya fixed,
+// jadi nggak perlu "masuk" ke dalam .dash-shell.
+//
+// `bare` — dipakai /messages: halaman itu sudah dari dulu TANPA padding 24
+// di sekitar kontennya (chat-layout ngatur tinggi & isinya sendiri,
+// termasuk scroll internal), jadi <main> di sini dibikin flex polos tanpa
+// padding, bukan dipaksa ikut pola padded seperti halaman lain.
+export default function AppShell({ children, aside, bare = false }) {
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { role, user } = useRole();
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   // Sekejap di render pertama sebelum RoleProvider sempat baca localStorage
   // (lihat context/RoleContext.js) — dibiarkan kosong daripada nge-crash
   // karena `user`/`navFor(null)` belum ada isinya.
   if (!role || !user) return null;
 
+<<<<<<< HEAD
   // Nama, kontak & peran di sidebar/popup profil dari user yang login; sisanya
   // (mis. warna avatar) tetap dari data mock.
   const shellUser = authUser
@@ -142,6 +169,21 @@ export default function AppShell({ children, aside, bare = false }) {
           </main>
           {aside && !gated && <div className="dash-aside">{aside}</div>}
         </div>
+=======
+  return (
+    <div className="dash-shell">
+      <Sidebar
+        open={sidebarOpen}
+        onToggle={() => setSidebarOpen((v) => !v)}
+        navItems={navFor(role)}
+        user={user}
+      />
+      <div className="dash-canvas">
+        <main style={bare ? { flex: 1, minWidth: 0, display: "flex" } : { flex: 1, padding: 24, minWidth: 0 }}>
+          <RoleGuard>{children}</RoleGuard>
+        </main>
+        {aside && <div style={{ padding: 24 }}>{aside}</div>}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       </div>
     </div>
   );

@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital.in — Digitalisasi UMKM bersama Talenta Mahasiswa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+
+  --bg: #F6F9FC;
+  --surface: #FFFFFF;
+
+  --border: #E1E8F0;
+  --border-strong: #C9D5E3;
+
+  --text: #17233A;
+  --text-muted: #64748B;
+  --text-faint: #94A3B8;
+
+  --primary: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-darker: #173B7A;
+
+  --primary-light: #DBEAFE;
+  --primary-tint: #EFF6FF;
+
+  --sky: #38BDF8;
+  --sky-tint: #E0F2FE;
+
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+
+  --warning: #D97706;
+  --warning-bg: #FEF3C7;
+
+  --error: #DC2626;
+  --error-bg: #FEE2E2;
+
+  --info: #0284C7;
+  --info-bg: #E0F2FE;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(15,23,42,.06);
+  --shadow-md: 0 6px 20px rgba(15,23,42,.08);
+
+}
+
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+img{max-width:100%;display:block;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+ul{margin:0;padding:0;list-style:none;}
+::selection{background:var(--primary-light);}
+
+/* ---------- Type scale ---------- */
+.t-display{font-size:44px;line-height:1.14;font-weight:800;letter-spacing:-0.01em;}
+.t-h1{font-size:32px;line-height:1.2;font-weight:700;letter-spacing:-0.01em;}
+.t-h2{font-size:24px;line-height:1.28;font-weight:700;}
+.t-h3{font-size:18px;line-height:1.35;font-weight:700;}
+.t-body{font-size:15px;line-height:1.6;font-weight:400;}
+.t-small{font-size:13px;line-height:1.5;font-weight:400;}
+.t-caption{font-size:12px;line-height:1.4;font-weight:600;color:var(--text-faint);}
+.t-button{font-size:14px;font-weight:600;}
+.muted{color:var(--text-muted);}
+.faint{color:var(--text-faint);}
+
+@media (max-width:640px){
+  .t-display{font-size:32px;}
+  .t-h1{font-size:26px;}
+  .t-h2{font-size:20px;}
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 20px;border-radius:var(--r-sm);border:1px solid transparent;
+  font-size:14px;font-weight:600;transition:background .12s ease, border-color .12s ease;
+  white-space:nowrap;
+}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong);}
+.btn-secondary:hover{border-color:var(--text-muted);}
+.btn-ghost{background:transparent;color:var(--primary-dark);}
+.btn-ghost:hover{background:var(--primary-tint);}
+.btn-danger-ghost{background:transparent;color:var(--error);border:1px solid var(--error-bg);}
+.btn-danger-ghost:hover{background:var(--error-bg);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-lg{padding:13px 26px;font-size:15px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-icon{padding:9px;border-radius:var(--r-sm);}
+
+/* ---------- Layout shells ---------- */
+#app{min-height:100vh;}
+.app-shell{display:flex;min-height:100vh;}
+.sidebar{
+  width:236px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);
+  padding:22px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sidebar-brand{display:flex;align-items:center;gap:9px;padding:4px 8px 22px;}
+.sidebar-brand .mark{width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;}
+.sidebar-brand .name{font-weight:800;font-size:17px;}
+.sidebar-nav a{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:var(--r-sm);
+  font-size:14px;font-weight:600;color:var(--text-muted);margin-bottom:2px;
+}
+.sidebar-nav a svg{width:18px;height:18px;flex-shrink:0;}
+.sidebar-nav a:hover{background:var(--bg);color:var(--text);}
+.sidebar-nav a.active{background:var(--primary-light);color:var(--primary-dark);}
+.sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--surface);}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);}
+.sidebar-user:hover{background:var(--bg);}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+.avatar-sm{width:28px;height:28px;font-size:11px;}
+.avatar-lg{width:64px;height:64px;font-size:22px;}
+
+.main-area{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{
+  height:64px;flex-shrink:0;border-bottom:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20;
+}
+.topbar-title{font-weight:700;font-size:17px;}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.icon-btn{width:38px;height:38px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;}
+.icon-btn:hover{background:var(--bg);}
+.icon-btn svg{width:18px;height:18px;color:var(--text-muted);}
+.dot-badge{
+  position:absolute;
+  top:7px;
+  right:7px;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--primary);
+  border:1.5px solid var(--surface);
+}
+.content{padding:28px;max-width:1180px;width:100%;margin:0 auto;}
+.content-narrow{max-width:760px;}
+
+.bottom-nav{display:none;}
+@media (max-width:860px){
+  .sidebar{display:none;}
+  .content{padding:18px 16px 90px;}
+  .bottom-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--surface);
+    border-top:1px solid var(--border);z-index:30;
+  }
+  .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text-faint);font-size:10.5px;font-weight:600;}
+  .bottom-nav a svg{width:20px;height:20px;}
+  .bottom-nav a.active{color:var(--primary-dark);}
+  .topbar{padding:0 16px;}
+}
+
+/* ---------- Cards / surfaces ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);}
+.card-pad{padding:20px;}
+.card-hover:hover{border-color:var(--border-strong);box-shadow:var(--shadow-sm);}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.grid{display:grid;gap:16px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+@media (max-width:900px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+
+/* ---------- Badges / status ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-error{background:var(--error-bg);color:var(--error);}
+.badge-info{background:var(--info-bg);color:var(--info);}
+.badge-neutral{background:var(--bg);color:var(--text-muted);border:1px solid var(--border);}
+.badge-primary{background:var(--primary-light);color:var(--primary-dark);}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* ---------- Progress ---------- */
+.progress-track{height:7px;background:var(--bg);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--primary);border-radius:20px;}
+
+/* ---------- Forms ---------- */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;}
+.field .hint{font-size:12.5px;color:var(--text-faint);margin-top:6px;}
+.input, select.input, textarea.input{
+  width:100%;padding:11px 13px;border:1px solid var(--border-strong);border-radius:var(--r-sm);
+  font-size:14.5px;background:var(--surface);color:var(--text);
+}
+.input:focus, select.input:focus, textarea.input:focus{outline:2px solid var(--primary);outline-offset:1px;border-color:var(--primary);}
+textarea.input{resize:vertical;min-height:96px;}
+.input-group{display:flex;}
+.input-group .input{border-radius:var(--r-sm) 0 0 var(--r-sm);}
+.input-prefix{display:flex;align-items:center;padding:0 13px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--r-sm) 0 0 var(--r-sm);background:var(--bg);font-size:14px;color:var(--text-muted);}
+.checkbox-row{display:flex;align-items:flex-start;gap:9px;}
+.radio-card{border:1px solid var(--border-strong);border-radius:var(--r-md);padding:14px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;}
+.radio-card.selected{border-color:var(--primary);background:var(--primary-tint);}
+
+/* ---------- Misc utility ---------- */
+.row{display:flex;align-items:center;}
+.row-between{display:flex;align-items:center;justify-content:space-between;}
+.gap-6{gap:6px;}.gap-8{gap:8px;}.gap-10{gap:10px;}.gap-12{gap:12px;}.gap-16{gap:16px;}.gap-20{gap:20px;}
+.mt-4{margin-top:4px;}.mt-8{margin-top:8px;}.mt-12{margin-top:12px;}.mt-16{margin-top:16px;}.mt-20{margin-top:20px;}.mt-24{margin-top:24px;}.mt-32{margin-top:32px;}
+.mb-8{margin-bottom:8px;}.mb-12{margin-bottom:12px;}.mb-16{margin-bottom:16px;}.mb-20{margin-bottom:20px;}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.pill-tab{padding:8px 15px;border-radius:20px;font-size:13.5px;font-weight:600;border:1px solid var(--border-strong);color:var(--text-muted);background:var(--surface);}
+.pill-tab.active{background:var(--text);color:#fff;border-color:var(--text);}
+.chip{padding:5px 11px;border-radius:6px;background:var(--bg);border:1px solid var(--border);font-size:12.5px;font-weight:600;color:var(--text-muted);}
+.link-btn{background:none;border:none;color:var(--primary-dark);font-weight:600;font-size:13.5px;padding:0;}
+.link-btn:hover{text-decoration:underline;}
+.skeleton-photo{background:linear-gradient(135deg,var(--primary-light),var(--sky-tint));}
+.clickable{cursor:pointer;}
+
+/* ---------- Landing ---------- */
+.landing-nav{
+  position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.landing-nav-inner{max-width:1180px;margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between;}
+.landing-nav-links{display:flex;gap:30px;}
+.landing-nav-links a{font-size:14.5px;font-weight:600;color:var(--text-muted);}
+.landing-nav-links a:hover{color:var(--text);}
+.landing-wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+@media (max-width:860px){.landing-nav-links{display:none;}}
+
+.hero{padding:64px 0 56px;}
+.hero-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;gap:32px;}.hero{padding:36px 0 40px;}}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--primary-dark);background:var(--primary-light);padding:6px 12px;border-radius:20px;margin-bottom:18px;}
+.hero-stats{display:flex;gap:28px;margin-top:28px;}
+.hero-stat b{font-size:22px;font-weight:800;display:block;}
+.hero-visual{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:6px;box-shadow:var(--shadow-md);}
+.hero-visual img{border-radius:12px;width:100%;height:400px;object-fit:cover;}
+
+.section{padding:56px 0;border-top:1px solid var(--border);}
+.section-head{max-width:560px;margin-bottom:36px;}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+@media (max-width:900px){.how-steps{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:560px){.how-steps{grid-template-columns:1fr;}}
+.how-step{padding:22px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);}
+.how-step .num{font-size:12px;font-weight:700;color:var(--primary-dark);margin-bottom:14px;}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:760px){.split{grid-template-columns:1fr;}}
+.split-card{border-radius:var(--r-lg);padding:32px;border:1px solid var(--border);}
+.split-card.umkm-c{background:var(--primary-darker);color:#fff;}
+.split-card.maha-c{background:var(--surface);}
+.split-card ul{margin-top:18px;}
+.split-card li{display:flex;gap:10px;padding:7px 0;font-size:14.5px;}
+
+.testi-card{padding:22px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);}
+.testi-card p{font-size:14.5px;line-height:1.65;}
+
+.cta-band{background:var(--primary);border-radius:var(--r-lg);padding:48px;text-align:center;color:#fff;}
+@media (max-width:640px){.cta-band{padding:32px 20px;}}
+
+.footer{border-top:1px solid var(--border);padding:44px 0 30px;margin-top:20px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;}
+@media (max-width:760px){.footer-grid{grid-template-columns:1fr 1fr;}}
+.footer-grid h4{font-size:13px;margin-bottom:12px;}
+.footer-grid a{display:block;font-size:13.5px;color:var(--text-muted);padding:5px 0;}
+
+/* ---------- Auth ---------- */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);}
+.auth-card{width:100%;max-width:420px;}
+.auth-brand{display:flex;align-items:center;gap:9px;justify-content:center;margin-bottom:28px;}
+.progress-steps{display:flex;gap:6px;margin-bottom:28px;}
+.progress-steps span{flex:1;height:4px;border-radius:4px;background:var(--border);}
+.progress-steps span.done{background:var(--primary);}
+
+/* ---------- Wizard (post project) ---------- */
+.wizard-head{display:flex;gap:0;margin-bottom:32px;}
+.wizard-step{flex:1;text-align:center;position:relative;font-size:12.5px;font-weight:600;color:var(--text-faint);}
+.wizard-step .circ{width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--border-strong);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:12px;font-weight:700;color:var(--text-faint);}
+.wizard-step.active .circ{border-color:var(--primary);color:var(--primary);background:var(--primary-tint);}
+.wizard-step.done .circ{border-color:var(--primary);background:var(--primary);color:#fff;}
+.wizard-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:60%;width:80%;height:2px;background:var(--border);z-index:-1;}
+.wizard-step.done:not(:last-child)::after{background:var(--primary);}
+
+.template-card{border:1px solid var(--border-strong);border-radius:var(--r-md);padding:16px;cursor:pointer;}
+.template-card:hover{border-color:var(--primary);}
+.template-card .ic{width:38px;height:38px;border-radius:8px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+
+/* ---------- Talent / project cards ---------- */
+.talent-card{padding:18px;}
+.talent-card .head{display:flex;gap:12px;}
+.talent-card .skills{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+.rating{display:flex;align-items:center;gap:4px;font-weight:700;font-size:13.5px;}
+.rating svg{width:14px;height:14px;color:#D9A441;}
+
+.project-card{padding:18px;}
+.milestone-item{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--border);}
+.milestone-item:last-child{border-bottom:none;}
+.m-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:2px solid var(--border-strong);background:var(--surface);}
+.m-dot.done{background:var(--primary);border-color:var(--primary);color:#fff;}
+.m-dot.active{border-color:var(--primary);color:var(--primary);background:var(--primary-tint);}
+.m-line{width:2px;flex:1;background:var(--border);margin:4px auto;}
+
+table.simple-table{width:100%;border-collapse:collapse;}
+table.simple-table th{text-align:left;font-size:12px;text-transform:none;color:var(--text-faint);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--border);}
+table.simple-table td{padding:13px 12px;border-bottom:1px solid var(--border);font-size:14px;}
+table.simple-table tr:last-child td{border-bottom:none;}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.tab-btn{padding:11px 4px;margin-right:22px;font-size:14px;font-weight:600;color:var(--text-faint);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;}
+.tab-btn.active{color:var(--text);border-bottom-color:var(--primary);}
+
+.empty-state{text-align:center;padding:48px 20px;color:var(--text-muted);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:13px 22px;border-radius:var(--r-sm);font-size:14px;font-weight:600;z-index:100;box-shadow:var(--shadow-md);}
+@media (max-width:860px){.toast{bottom:80px;}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg>',
+  briefcase:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>',
+  folder:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>',
+  award:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="m9 14-2 7 5-3 5 3-2-7"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6.3 6.9.7-5.2 4.7 1.5 6.8-6.1-3.6-6.1 3.6 1.5-6.8-5.2-4.7 6.9-.7z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  chevRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  chevLeft:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  mapPin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5Z"/><path d="m9.5 12 1.8 1.8 3.2-3.6"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>',
+  logout:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+  paperclip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.4 11.6-9 9a5 5 0 0 1-7-7l9-9a3.5 3.5 0 0 1 5 5l-9 9a2 2 0 0 1-3-3l8-8"/></svg>',
+  send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 20 18-8L3 4v6l14 2-14 2Z"/></svg>',
+};
+function icon(name,cls){return `<span class="${cls||''}" style="display:inline-flex">${ICONS[name]||''}</span>`;}
+
+const STUDENTS = [
+  {id:'s1', name:'Nadia Putri', uni:'Universitas Indonesia', major:'Desain Komunikasi Visual', skills:['Instagram Content','Canva','Copywriting'], rating:4.9, completed:23, price:'Rp350rb', city:'Depok', bio:'Fokus di konten sosial media untuk F&B dan retail lokal selama 2 tahun terakhir.', avatarBg:'#EADFF0'},
+  {id:'s2', name:'Rangga Saputra', uni:'Institut Teknologi Bandung', major:'Teknik Informatika', skills:['Website','React','UI/UX'], rating:5.0, completed:14, price:'Rp1.2jt', city:'Bandung', bio:'Bangun website untuk 10+ UMKM, dari landing page sampai sistem pemesanan sederhana.', avatarBg:'#DDEDE3'},
+  {id:'s3', name:'Dewi Lestari', uni:'Universitas Gadjah Mada', major:'Manajemen', skills:['Digital Bookkeeping','Excel','Laporan Keuangan'], rating:4.8, completed:19, price:'Rp250rb', city:'Yogyakarta', bio:'Bantu UMKM rapikan pembukuan dan laporan bulanan supaya lebih mudah cari pinjaman modal.', avatarBg:'#F5E5D9'},
+  {id:'s4', name:'Farhan Maulana', uni:'Universitas Bina Nusantara', major:'Desain Grafis', skills:['Logo','Branding','Ilustrasi'], rating:4.9, completed:31, price:'Rp400rb', city:'Jakarta', bio:'Sudah merancang identitas visual untuk lebih dari 30 usaha kecil, dari kedai kopi sampai laundry.', avatarBg:'#F0E3E0'},
+  {id:'s5', name:'Kirana Ayu', uni:'Telkom University', major:'Ilmu Komunikasi', skills:['Social Media','TikTok','Content Planning'], rating:4.7, completed:11, price:'Rp300rb', city:'Bandung', bio:'Senang membantu UMKM menemukan gaya konten yang cocok dengan audiens mereka.', avatarBg:'#DEE7F2'},
+  {id:'s6', name:'Bagas Wirawan', uni:'Universitas Diponegoro', major:'Sistem Informasi', skills:['Marketplace Setup','Shopee','Tokopedia'], rating:4.8, completed:16, price:'Rp275rb', city:'Semarang', bio:'Ahli mendaftarkan dan mengoptimalkan toko UMKM di marketplace besar.', avatarBg:'#E4EEDC'},
+];
+
+const PROJECTS = [
+  {id:'p1', title:'Desain Konten Instagram Bulanan', umkm:'Kopi Anteng', category:'Social Media', budget:'Rp1.500.000', deadline:'25 Sep 2026', applicants:8, location:'Jakarta Selatan (Remote)', desc:'Butuh 12 desain feed dan 4 reels untuk promosi menu baru bulan ini.'},
+  {id:'p2', title:'Pembuatan Logo & Panduan Merek', umkm:'Batik Asri Nusantara', category:'Branding', budget:'Rp2.000.000', deadline:'30 Sep 2026', applicants:14, location:'Solo (Remote)', desc:'Logo baru untuk lini produk batik premium, lengkap dengan brand guideline ringkas.'},
+  {id:'p3', title:'Website Company Profile Sederhana', umkm:'Berkah Furniture', category:'Website', budget:'Rp3.500.000', deadline:'10 Okt 2026', applicants:5, location:'Jepara (Remote)', desc:'Website 5 halaman untuk showcase produk furniture dan katalog harga.'},
+  {id:'p4', title:'Pendaftaran & Optimasi Toko Shopee', umkm:'Snack Kriuk Ibu Tini', category:'Marketplace', budget:'Rp600.000', deadline:'20 Sep 2026', applicants:11, location:'Bandung (Remote)', desc:'Setup toko baru, unggah 25 produk, dan optimasi judul & foto produk.'},
+  {id:'p5', title:'Rapikan Pembukuan 6 Bulan Terakhir', umkm:'Laundry Kilat Bersih', category:'Digital Bookkeeping', budget:'Rp800.000', deadline:'22 Sep 2026', applicants:6, location:'Malang (Remote)', desc:'Migrasi catatan manual ke spreadsheet dan buat laporan laba rugi sederhana.'},
+  {id:'p6', title:'Desain Menu & Banner Promosi', umkm:'Warung Ibu Sari', category:'Graphic Design', budget:'Rp450.000', deadline:'19 Sep 2026', applicants:9, location:'Yogyakarta (Remote)', desc:'Menu dine-in baru dan 3 banner promosi untuk media sosial.'},
+];
+
+const TEMPLATES = [
+  {title:'Buat Konten Instagram', cat:'Social Media', icon:'chat', desc:'Paket konten feed & reels bulanan'},
+  {title:'Buat Logo Usaha', cat:'Branding', icon:'award', desc:'Logo + panduan penggunaan dasar'},
+  {title:'Bangun Website Sederhana', cat:'Website', icon:'folder', desc:'Website profil usaha 3–5 halaman'},
+  {title:'Daftarkan Usaha di Marketplace', cat:'Marketplace', icon:'briefcase', desc:'Setup toko & unggah katalog produk'},
+];
+
+const state = {
+  role:null,            // 'umkm' | 'mahasiswa'
+  screen:'landing',
+  regType:null,
+  selectedStudent:null,
+  selectedProject:null,
+  wizardStep:1,
+  wizardData:{category:null, template:null},
+  findTalentFilterOpen:false,
+  findProjectFilterOpen:false,
+};
+
+function go(screen, extra){
+  state.screen = screen;
+  if(extra) Object.assign(state, extra);
+  window.scrollTo(0,0);
+  render();
+}
+function enterApp(role){ state.role = role; go(role==='umkm' ? 'umkm-dashboard' : 'maha-dashboard'); }
+function toast(msg){
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 2400);
+}
+function initials(name){ return name.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase(); }
+
+/* ============================================================
+   SHELL: sidebar + topbar + bottom nav
+   ============================================================ */
+const NAV_UMKM = [
+  {id:'umkm-dashboard', label:'Dashboard', icon:'home'},
+  {id:'umkm-projects', label:'Proyek', icon:'folder'},
+  {id:'find-talent', label:'Cari Talenta', icon:'search'},
+  {id:'messages', label:'Pesan', icon:'chat'},
+  {id:'umkm-payments', label:'Pembayaran', icon:'wallet'},
+  {id:'notifications', label:'Notifikasi', icon:'bell'},
+  {id:'profile', label:'Profil', icon:'user'},
+];
+const NAV_MAHA = [
+  {id:'maha-dashboard', label:'Dashboard', icon:'home'},
+  {id:'find-projects', label:'Cari Proyek', icon:'search'},
+  {id:'maha-projects', label:'Proyek Saya', icon:'folder'},
+  {id:'portfolio', label:'Portofolio', icon:'award'},
+  {id:'earnings', label:'Penghasilan', icon:'wallet'},
+  {id:'messages', label:'Pesan', icon:'chat'},
+  {id:'profile', label:'Profil', icon:'user'},
+];
+const BOTTOM_UMKM = ['umkm-dashboard','umkm-projects','find-talent','messages','profile'];
+const BOTTOM_MAHA = ['maha-dashboard','find-projects','maha-projects','messages','profile'];
+
+function shell(title, innerHtml){
+  const nav = state.role==='umkm' ? NAV_UMKM : NAV_MAHA;
+  const bottom = state.role==='umkm' ? BOTTOM_UMKM : BOTTOM_MAHA;
+  const isActive = (id)=> state.screen===id || (id==='umkm-projects' && state.screen==='my-project') || (id==='maha-projects' && state.screen==='my-project');
+  return `
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="mark">D</div><div class="name">Digital.in</div></div>
+      <nav class="sidebar-nav">
+        ${nav.map(n=>`<a href="#" class="${isActive(n.id)?'active':''}" onclick="go('${n.id}');return false;">${icon(n.icon)} ${n.label}</a>`).join('')}
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-user" onclick="go('landing');state.role=null;return false;">
+          <div class="avatar avatar-sm">${state.role==='umkm'?'KA':'NP'}</div>
+          <div style="min-width:0">
+            <div class="t-small" style="font-weight:700;">${state.role==='umkm'?'Kopi Anteng':'Nadia Putri'}</div>
+            <div class="t-caption" style="color:var(--text-faint)">Keluar</div>
+          </div>
+        </a>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="topbar-title">${title}</div>
+        <div class="topbar-right">
+          <button class="icon-btn" onclick="go('notifications')">${icon('bell')}<span class="dot-badge"></span></button>
+          <div class="avatar avatar-sm">${state.role==='umkm'?'KA':'NP'}</div>
+        </div>
+      </div>
+      <div class="content">${innerHtml}</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    ${bottom.map(id=>{const n=[...NAV_UMKM,...NAV_MAHA].find(x=>x.id===id);return `<a href="#" class="${isActive(id)?'active':''}" onclick="go('${id}');return false;">${icon(n.icon)}<span>${n.label}</span></a>`;}).join('')}
+  </nav>`;
+}
+
+/* ============================================================
+   RENDER ROUTER
+   ============================================================ */
+function render(){
+  const app = document.getElementById('app');
+  let html = '';
+  switch(state.screen){
+    case 'landing': html = screenLanding(); break;
+    case 'login': html = screenLogin(); break;
+    case 'choose-type': html = screenChooseType(); break;
+    case 'register': html = screenRegister(); break;
+    case 'verify': html = screenVerify(); break;
+    case 'forgot': html = screenForgot(); break;
+
+    case 'umkm-dashboard': html = screenUmkmDashboard(); break;
+    case 'umkm-projects': html = screenUmkmProjects(); break;
+    case 'post-project': html = screenPostProject(); break;
+    case 'find-talent': html = screenFindTalent(); break;
+    case 'talent-profile': html = screenTalentProfile(); break;
+    case 'umkm-payments': html = screenUmkmPayments(); break;
+
+    case 'maha-dashboard': html = screenMahaDashboard(); break;
+    case 'find-projects': html = screenFindProjects(); break;
+    case 'project-detail': html = screenProjectDetail(); break;
+    case 'apply-project': html = screenApplyProject(); break;
+    case 'maha-projects': html = screenMahaProjects(); break;
+    case 'portfolio': html = screenPortfolio(); break;
+    case 'earnings': html = screenEarnings(); break;
+
+    case 'my-project': html = screenMyProject(); break;
+    case 'milestone-detail': html = screenMilestoneDetail(); break;
+    case 'revision': html = screenRevision(); break;
+    case 'messages': html = screenMessages(); break;
+    case 'notifications': html = screenNotifications(); break;
+    case 'profile': html = screenProfile(); break;
+
+    default: html = screenLanding();
+  }
+  app.innerHTML = html;
+  window.scrollTo({top:0});
+}
+
+/* ============================================================
+   LANDING PAGE
+   ============================================================ */
+function screenLanding(){
+  return `
+  <div class="landing-nav">
+    <div class="landing-nav-inner">
+      <div class="sidebar-brand" style="padding:0;"><div class="mark">D</div><div class="name">Digital.in</div></div>
+      <div class="landing-nav-links">
+        <a href="#cara-kerja" onclick="scrollToAnchor(event,'cara-kerja')">Cara Kerja</a>
+        <a href="#umkm" onclick="scrollToAnchor(event,'umkm')">Untuk UMKM</a>
+        <a href="#mahasiswa" onclick="scrollToAnchor(event,'mahasiswa')">Untuk Mahasiswa</a>
+        <a href="#talenta" onclick="scrollToAnchor(event,'talenta')">Talenta</a>
+      </div>
+      <div class="row gap-10">
+        <button class="btn btn-secondary btn-sm" onclick="go('login')">Masuk</button>
+        <button class="btn btn-primary btn-sm" onclick="go('choose-type')">Daftar Gratis</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-wrap hero">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">${icon('shield')} Dipercaya 1.200+ UMKM di seluruh Indonesia</div>
+        <h1 class="t-display">Digitalisasi usahamu.</h1>
+        <p class="t-body muted mt-16" style="max-width:480px;">Temukan talenta terverifikasi untuk desain, website, media sosial, dan kebutuhan digital lainnya.</p>
+        <div class="row gap-12 mt-24">
+          <button class="btn btn-primary btn-lg" onclick="go('choose-type')">Cari Talenta ${icon('chevRight')}</button>
+          <button class="btn btn-secondary btn-lg" onclick="go('choose-type')">Cari Proyek</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>3.400+</b><span class="t-small muted">Proyek selesai</span></div>
+          <div class="hero-stat"><b>2.100+</b><span class="t-small muted">Talenta terverifikasi</span></div>
+          <div class="hero-stat"><b>4.8/5</b><span class="t-small muted">Rating rata-rata</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img class="skeleton-photo" style="height:400px;" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'></svg>" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-wrap section" id="cara-kerja">
+    <div class="section-head">
+      <h2 class="t-h1">Mulai dalam 4 langkah</h2>
+      <p class="t-body muted mt-8">Dari kebutuhan hingga hasil, semuanya terstruktur.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step"><div class="num">Langkah 1</div><h3 class="t-h3">Pilih template atau buat brief sendiri.</h3><p class="t-small muted mt-8">Pilih template proyek atau tulis kebutuhan sendiri, lengkap dengan budget dan tenggat waktu.</p></div>
+      <div class="how-step"><div class="num">Langkah 2</div><h3 class="t-h3">Review proposal dan pilih yang paling cocok.</h3><p class="t-small muted mt-8">Mahasiswa terverifikasi mengirim proposal, kamu pilih yang paling cocok.</p></div>
+      <div class="how-step"><div class="num">Langkah 3</div><h3 class="t-h3">Pantau progres lewat milestone</h3><p class="t-small muted mt-8">Pekerjaan dipecah jadi tahap-tahap kecil supaya progresnya jelas terlihat.</p></div>
+      <div class="how-step"><div class="num">Langkah 4</div><h3 class="t-h3">Dana dicairkan setelah hasil disetujui.</h3><p class="t-small muted mt-8">Dana ditahan platform dan baru dicairkan setelah kamu setujui hasilnya.</p></div>
+    </div>
+  </div>
+
+  <div class="landing-wrap section" id="umkm">
+    <div class="split">
+      <div class="split-card umkm-c" id="umkm-anchor">
+        <span class="badge" style="background:rgba(255,255,255,0.15);color:#fff;">Untuk UMKM</span>
+        <h3 class="t-h2 mt-16" style="color:#fff;">Solusi digital tanpa tim besar</h3>
+        <ul>
+          <li>${icon('check')} Harga terjangkau</li>
+          <li>${icon('check')} Template brief siap pakai</li>
+          <li>${icon('check')} Pembayaran berbasis milestone</li>
+          <li>${icon('check')} Revisi lebih terstruktur</li>
+        </ul>
+        <button class="btn btn-secondary mt-24" style="background:#fff;" onclick="go('choose-type')">Post Proyek Pertamamu</button>
+      </div>
+      <div class="split-card maha-c" id="mahasiswa">
+        <span class="badge badge-primary">Untuk Mahasiswa</span>
+        <h3 class="t-h2 mt-16">Pengalaman kerja nyata, sambil kuliah</h3>
+        <ul>
+          <li>${icon('check')} Bangun portofolio dari proyek nyata</li>
+          <li>${icon('check')} Dapat penghasilan & sertifika</li>
+          <li>${icon('check')} Dapat feedback dari mentor</li>
+          <li>${icon('check')} Bangun reputasi lewat rating</li>
+        </ul>
+        <button class="btn btn-primary mt-24" onclick="go('choose-type')">Mulai Cari Proyek</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-wrap section">
+    <div class="section-head">
+      <h2 class="t-h1">Kerja lebih aman, hasil lebih terjamin</h2>
+      <p class="t-body muted mt-8">Verifikasi, milestone, dan review menjaga kualitas setiap proyek.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card card-pad"><div class="mark" style="width:36px;height:36px;border-radius:8px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;">${icon('shield')}</div><h3 class="t-h3 mt-12">Verifikasi identitas</h3><p class="t-small muted mt-8">UMKM dan mahasiswa melewati proses verifikasi.</p></div>
+      <div class="card card-pad"><div class="mark" style="width:36px;height:36px;border-radius:8px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;">${icon('folder')}</div><h3 class="t-h3 mt-12">Milestone & mentor review</h3><p class="t-small muted mt-8">Proyek terstruktur, dengan review sebelum dikirim.</p></div>
+      <div class="card card-pad"><div class="mark" style="width:36px;height:36px;border-radius:8px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;">${icon('star')}</div><h3 class="t-h3 mt-12">Rating & portofolio terverifikasi</h3><p class="t-small muted mt-8">Setiap proyek membangun reputasi dan portofolio.</p></div>
+    </div>
+  </div>
+
+  <div class="landing-wrap section" id="talenta">
+    <div class="section-head row-between" style="align-items:flex-end;">
+      <div><h2 class="t-h1">Talenta yang siap membantu</h2><p class="t-body muted mt-8">Temukan mahasiswa terverifikasi sesuai kebutuhanmu.</p></div>
+      <button class="btn btn-secondary" onclick="go('choose-type')">Lihat Semua</button>
+    </div>
+    <div class="grid grid-3">
+      ${STUDENTS.slice(0,3).map(s=>talentCardHtml(s)).join('')}
+    </div>
+  </div>
+
+  <div class="landing-wrap section">
+    <div class="section-head"><h2 class="t-h1">Kata mereka yang sudah mencoba</h2></div>
+    <div class="grid grid-3">
+      <div class="testi-card"><div class="rating">${icon('star')}${icon('star')}${icon('star')}${icon('star')}${icon('star')}</div><p class="mt-12">Akhirnya saya menemukan talenta yang paham konten dan kebutuhan toko saya.</p><div class="row gap-10 mt-16"><div class="avatar avatar-sm">RS</div><div><div class="t-small" style="font-weight:700">Ratna Sulistiowati</div><div class="t-caption">Pemilik, Kopi Anteng</div></div></div></div>
+      <div class="testi-card"><div class="rating">${icon('star')}${icon('star')}${icon('star')}${icon('star')}${icon('star')}</div><p class="mt-12">Milestone membuat pembayaran dan progres proyek jadi jauh lebih jelas</p><div class="row gap-10 mt-16"><div class="avatar avatar-sm">FM</div><div><div class="t-small" style="font-weight:700">Farhan Maulana</div><div class="t-caption">Mahasiswa, Binus</div></div></div></div>
+      <div class="testi-card"><div class="rating">${icon('star')}${icon('star')}${icon('star')}${icon('star')}${icon('star')}</div><p class="mt-12">Website kami selesai dengan kualitas bagus dan biaya yang lebih terjangkau.</p><div class="row gap-10 mt-16"><div class="avatar avatar-sm">HW</div><div><div class="t-small" style="font-weight:700">Hendra Wibowo</div><div class="t-caption">Pemilik, Berkah Furniture</div></div></div></div>
+    </div>
+  </div>
+
+  <div class="landing-wrap" style="padding:0 28px 64px;">
+    <div class="cta-band">
+      <h2 class="t-h1" style="color:#fff;">Siap mulai digitalisasi usahamu?</h2>
+      <p class="t-body mt-8" style="color:rgba(255,255,255,0.85);">Daftar gratis dan mulai proyek pertamamu.</p>
+      <div class="row gap-12 mt-24" style="justify-content:center;">
+        <button class="btn btn-lg" style="background:#fff;color:var(--primary-dark);" onclick="go('choose-type')">Post Proyek</button>
+        <button class="btn btn-lg" style="background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.4);" onclick="go('choose-type')">Cari Proyek</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-wrap footer">
+    <div class="footer-grid">
+      <div>
+        <div class="sidebar-brand" style="padding:0 0 12px;"><div class="mark">D</div><div class="name">Digital.in</div></div>
+        <p class="t-small muted" style="max-width:280px;">Platform yang menghubungkan UMKM Indonesia dengan mahasiswa untuk kebutuhan digitalisasi usaha.</p>
+      </div>
+      <div><h4 class="t-caption">Produk</h4><a href="#">Untuk UMKM</a><a href="#">Untuk Mahasiswa</a><a href="#">Harga</a></div>
+      <div><h4 class="t-caption">Perusahaan</h4><a href="#">Tentang Kami</a><a href="#">Karier</a><a href="#">Blog</a></div>
+      <div><h4 class="t-caption">Bantuan</h4><a href="#">Pusat Bantuan</a><a href="#">Syarat & Ketentuan</a><a href="#">Kebijakan Privasi</a></div>
+    </div>
+    <div class="t-caption mt-32" style="color:var(--text-faint)">© 2026 Digital.in Indonesia. Seluruh hak cipta dilindungi.</div>
+  </div>
+  `;
+}
+function scrollToAnchor(e,id){e.preventDefault();const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
+
+function talentCardHtml(s){
+  return `
+  <div class="card card-pad card-hover talent-card clickable" onclick="go('talent-profile',{selectedStudent:'${s.id}'})">
+    <div class="head">
+      <div class="avatar avatar-lg" style="background:${s.avatarBg};color:var(--text);">${initials(s.name)}</div>
+      <div style="min-width:0;">
+        <div class="t-h3">${s.name}</div>
+        <div class="t-small muted">${s.major}</div>
+        <div class="t-caption" style="color:var(--text-faint)">${s.uni}</div>
+      </div>
+    </div>
+    <p class="t-small muted mt-12">${s.bio}</p>
+    <div class="skills">${s.skills.map(k=>`<span class="chip">${k}</span>`).join('')}</div>
+    <div class="row-between mt-12">
+      <div class="rating">${icon('star')} ${s.rating} <span class="faint t-small" style="font-weight:400">(${s.completed} proyek)</span></div>
+      <div class="t-small" style="font-weight:700;">${s.price}<span class="faint" style="font-weight:400;">/proyek</span></div>
+    </div>
+    <button class="btn btn-secondary btn-block mt-12" onclick="event.stopPropagation();go('talent-profile',{selectedStudent:'${s.id}'})">Lihat Profil</button>
+  </div>`;
+}
+
+/* ============================================================
+   AUTH SCREENS
+   ============================================================ */
+function screenLogin(){
+  return `<div class="auth-wrap"><div class="auth-card card card-pad" style="padding:32px;">
+    <div class="auth-brand"><div class="mark">D</div><div class="name t-h3">Digital.in</div></div>
+    <h2 class="t-h2" style="text-align:center;">Masuk ke akunmu</h2>
+    <p class="t-small muted mt-8" style="text-align:center;">Belum punya akun? <a class="link-btn" href="#" onclick="go('choose-type');return false;">Daftar di sini</a></p>
+    <div class="mt-24">
+      <div class="field"><label>Email</label><input class="input" type="email" placeholder="nama@email.com"></div>
+      <div class="field"><label>Kata sandi</label><input class="input" type="password" placeholder="••••••••"></div>
+      <div class="row-between mb-16"><label class="t-small row gap-6"><input type="checkbox"> Ingat saya</label><a class="link-btn" href="#" onclick="go('forgot');return false;">Lupa kata sandi?</a></div>
+      <button class="btn btn-primary btn-block btn-lg" onclick="enterApp(demoRole())">Masuk</button>
+    </div>
+  </div></div>`;
+}
+function demoRole(){ return state._lastReg || 'umkm'; }
+
+function screenChooseType(){
+  return `<div class="auth-wrap"><div class="auth-card" style="max-width:460px;">
+    <div class="auth-brand"><div class="mark">K</div><div class="name t-h3">Digital.in</div></div>
+    <h2 class="t-h2" style="text-align:center;">Kamu daftar sebagai apa?</h2>
+    <p class="t-small muted mt-8" style="text-align:center;">Pilih jenis akun untuk melanjutkan pendaftaran.</p>
+    <div class="mt-24" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="radio-card" onclick="go('register',{regType:'umkm'})">
+        <div class="mark" style="width:42px;height:42px;border-radius:10px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${icon('briefcase')}</div>
+        <div><div class="t-h3">Saya Pemilik UMKM</div><div class="t-small muted mt-4">Saya butuh bantuan digitalisasi untuk usaha saya.</div></div>
+      </div>
+      <div class="radio-card" onclick="go('register',{regType:'mahasiswa'})">
+        <div class="mark" style="width:42px;height:42px;border-radius:10px;background:var(--primary-light);
+color:var(--primary-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${icon('award')}</div>
+        <div><div class="t-h3">Saya Mahasiswa</div><div class="t-small muted mt-4">Saya ingin mengerjakan proyek dan membangun portofolio.</div></div>
+      </div>
+    </div>
+    <p class="t-small muted mt-24" style="text-align:center;">Sudah punya akun? <a class="link-btn" href="#" onclick="go('login');return false;">Masuk</a></p>
+  </div></div>`;
+}
+
+function screenRegister(){
+  const type = state.regType || 'umkm';
+  const isUmkm = type==='umkm';
+  return `<div class="auth-wrap"><div class="auth-card" style="max-width:440px;">
+    <div class="auth-brand"><div class="mark">D</div><div class="name t-h3">Digital.in</div></div>
+    <div class="progress-steps"><span class="done"></span><span></span><span></span></div>
+    <h2 class="t-h2">${isUmkm?'Daftarkan usahamu':'Buat profil mahasiswa'}</h2>
+    <p class="t-small muted mt-8">${isUmkm?'Cuma butuh beberapa menit — kamu bisa lengkapi detail lainnya nanti.':'Isi data dasar untuk mulai menjelajahi proyek.'}</p>
+    <div class="mt-20">
+      <div class="field"><label>${isUmkm?'Nama Usaha':'Nama Lengkap'}</label><input class="input" placeholder="${isUmkm?'contoh: Kopi Anteng':'contoh: Nadia Putri'}"></div>
+      ${isUmkm ? `<div class="field"><label>Kategori Usaha</label><select class="input"><option>Kuliner</option><option>Fashion</option><option>Kerajinan</option><option>Jasa</option><option>Lainnya</option></select></div>` :
+      `<div class="field"><label>Universitas</label><input class="input" placeholder="contoh: Universitas Indonesia"></div>`}
+      <div class="field"><label>Email</label><input class="input" type="email" placeholder="${isUmkm?'nama@usaha.com':'nama@student.ac.id'}"></div>
+      <div class="field"><label>Nomor WhatsApp</label><input class="input" placeholder="08xxxxxxxxxx"></div>
+      <div class="field"><label>Buat Kata Sandi</label><input class="input" type="password" placeholder="Minimal 8 karakter"></div>
+      <div class="checkbox-row mb-20"><input type="checkbox" checked style="margin-top:3px;"><span class="t-small muted">Saya setuju dengan <a class="link-btn" href="#">Syarat & Ketentuan</a> dan <a class="link-btn" href="#">Kebijakan Privasi</a> Kerjasama.</span></div>
+      <button class="btn btn-primary btn-block btn-lg" onclick="state._lastReg='${type}';go('verify')">Buat Akun</button>
+      <button class="btn btn-secondary btn-block mt-12" onclick="go('choose-type')">${icon('chevLeft')} Kembali</button>
+    </div>
+  </div></div>`;
+}
+
+function screenVerify(){
+  const isUmkm = (state.regType||'umkm')==='umkm';
+  return `<div class="auth-wrap"><div class="auth-card" style="max-width:440px;">
+    <div class="auth-brand"><div class="mark">D</div><div class="name t-h3">Digital.in</div></div>
+    <div class="progress-steps"><span class="done"></span><span class="done"></span><span></span></div>
+    <h2 class="t-h2">Verifikasi ${isUmkm?'usaha':'status mahasiswa'}</h2>
+    <p class="t-small muted mt-8">Langkah ini membantu menjaga kepercayaan di platform. Prosesnya biasanya selesai dalam 1×24 jam.</p>
+    <div class="mt-20">
+      ${isUmkm ? `
+      <div class="field"><label>Nomor Induk Berusaha (NIB) — opsional</label><input class="input" placeholder="Kosongkan jika belum punya"></div>
+      <div class="field"><label>Unggah Foto Usaha / KTP Pemilik</label>
+        <div class="card" style="border-style:dashed;padding:28px;text-align:center;">${icon('paperclip')}<div class="t-small mt-8">Seret file ke sini atau <span class="link-btn">pilih file</span></div><div class="t-caption mt-4">JPG, PNG, atau PDF — maks 5MB</div></div>
+      </div>` : `
+      <div class="field"><label>Email Kampus (.ac.id)</label><input class="input" placeholder="nama@student.ac.id"></div>
+      <div class="field"><label>Unggah Kartu Tanda Mahasiswa (KTM)</label>
+        <div class="card" style="border-style:dashed;padding:28px;text-align:center;">${icon('paperclip')}<div class="t-small mt-8">Seret file ke sini atau <span class="link-btn">pilih file</span></div><div class="t-caption mt-4">JPG atau PNG — maks 5MB</div></div>
+      </div>`}
+      <div class="card mt-16" style="background:var(--info-bg);border-color:transparent;padding:14px;">
+        <div class="t-small" style="color:var(--info);font-weight:600;">${icon('shield')} Data kamu aman dan hanya dipakai untuk proses verifikasi.</div>
+      </div>
+      <button class="btn btn-primary btn-block btn-lg mt-20" onclick="enterApp('${state.regType||'umkm'}');toast('Akun berhasil dibuat! Verifikasi sedang diproses.')">Kirim untuk Verifikasi</button>
+      <button class="btn btn-ghost btn-block mt-8" onclick="enterApp('${state.regType||'umkm'}')">Lewati untuk sekarang</button>
+    </div>
+  </div></div>`;
+}
+
+function screenForgot(){
+  return `<div class="auth-wrap"><div class="auth-card card card-pad" style="padding:32px;max-width:420px;">
+    <div class="auth-brand"><div class="mark">D</div><div class="name t-h3">Digital.in</div></div>
+    <h2 class="t-h2" style="text-align:center;">Lupa kata sandi?</h2>
+    <p class="t-small muted mt-8" style="text-align:center;">Masukkan email kamu, kami akan kirim tautan untuk atur ulang kata sandi.</p>
+    <div class="mt-20">
+      <div class="field"><label>Email</label><input class="input" type="email" placeholder="nama@email.com"></div>
+      <button class="btn btn-primary btn-block btn-lg" onclick="toast('Tautan reset telah dikirim ke email kamu');go('login')">Kirim Tautan Reset</button>
+      <button class="btn btn-ghost btn-block mt-8" onclick="go('login')">${icon('chevLeft')} Kembali ke Masuk</button>
+    </div>
+  </div></div>`;
+}
+
+/* ============================================================
+   UMKM: DASHBOARD
+   ============================================================ */
+function screenUmkmDashboard(){
+  return shell('Dashboard', `
+    <div class="row-between mb-20" style="align-items:flex-start;">
+      <div><h1 class="t-h1">Halo, Kopi Anteng 👋</h1><p class="t-body muted mt-4">Berikut ringkasan proyek dan aktivitas usahamu hari ini.</p></div>
+      <button class="btn btn-primary" onclick="go('post-project')">${icon('plus')} Post Proyek Baru</button>
+    </div>
+
+    <div class="grid grid-4 mb-20">
+      <div class="card card-pad"><div class="t-caption">PROYEK AKTIF</div><div class="t-h1 mt-8">3</div></div>
+      <div class="card card-pad"><div class="t-caption">APLIKASI MASUK</div><div class="t-h1 mt-8">12</div></div>
+      <div class="card card-pad"><div class="t-caption">TENGGAT TERDEKAT</div><div class="t-h1 mt-8">3 hari</div></div>
+      <div class="card card-pad"><div class="t-caption">TOTAL PENGELUARAN</div><div class="t-h1 mt-8">Rp8,4jt</div></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:2fr 1fr;">
+      <div>
+        <div class="section-title"><h2 class="t-h3">Proyek Aktif</h2><a class="link-btn" href="#" onclick="go('umkm-projects');return false;">Lihat Semua</a></div>
+        <div class="card">
+          ${umkmActiveProjectRow('Desain Konten Instagram', 'Nadia Putri', 65, 'In Progress', 'Draf Konten', '18 Sep 2026')}
+          ${umkmActiveProjectRow('Logo & Panduan Merek', 'Farhan Maulana', 30, 'In Progress', 'Konsep Awal', '24 Sep 2026')}
+          ${umkmActiveProjectRow('Setup Toko Shopee', 'Bagas Wirawan', 90, 'Menunggu Review', 'Pengiriman Akhir', '16 Sep 2026')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Aplikasi Menunggu Review</h2></div>
+        <div class="card card-pad">
+          ${applicantRow('Kirana Ayu', 'Desain Konten Instagram', 'Rp1.400.000')}
+          <div class="divider" style="margin:14px 0;"></div>
+          ${applicantRow('Dewi Lestari', 'Rapikan Pembukuan', 'Rp750.000')}
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title"><h2 class="t-h3">Tenggat Mendatang</h2></div>
+        <div class="card card-pad" style="display:flex;flex-direction:column;gap:14px;">
+          ${deadlineRow('Setup Toko Shopee', '16 Sep', 'warning')}
+          ${deadlineRow('Desain Konten Instagram', '18 Sep', 'neutral')}
+          ${deadlineRow('Logo & Panduan Merek', '24 Sep', 'neutral')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Talenta Rekomendasi</h2></div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${STUDENTS.slice(3,5).map(s=>`
+          <div class="card card-pad row gap-12 clickable" onclick="go('talent-profile',{selectedStudent:'${s.id}'})">
+            <div class="avatar" style="background:${s.avatarBg};color:var(--text);">${initials(s.name)}</div>
+            <div style="min-width:0;"><div class="t-small" style="font-weight:700;">${s.name}</div><div class="t-caption">${s.skills[0]} · ${icon('star')} ${s.rating}</div></div>
+          </div>`).join('')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Aktivitas Terbaru</h2></div>
+        <div class="card card-pad" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="t-small"><b>Bagas Wirawan</b> mengirim hasil akhir untuk <b>Setup Toko Shopee</b><div class="t-caption mt-4">2 jam lalu</div></div>
+          <div class="divider" style="margin:0;"></div>
+          <div class="t-small"><b>Kirana Ayu</b> melamar proyek <b>Desain Konten Instagram</b><div class="t-caption mt-4">5 jam lalu</div></div>
+        </div>
+      </div>
+    </div>
+  `);
+}
+function umkmActiveProjectRow(title, student, progress, status, nextMs, deadline){
+  const badgeClass = status==='Menunggu Review' ? 'badge-warning' : 'badge-info';
+  return `
+  <div class="card-pad clickable" style="border-bottom:1px solid var(--border);" onclick="go('my-project')">
+    <div class="row-between mb-8">
+      <div class="t-h3" style="font-size:15px;">${title}</div>
+      <span class="badge ${badgeClass}">${status}</span>
+    </div>
+    <div class="row gap-8 t-small muted mb-12">${icon('user')} ${student} · Tenggat ${deadline}</div>
+    <div class="row-between t-caption mb-4"><span>Progress</span><span>${progress}%</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${progress}%;"></div></div>
+    <div class="t-caption mt-8">Milestone berikutnya: ${nextMs}</div>
+  </div>`;
+}
+function applicantRow(name, project, price){
+  return `
+  <div class="row-between">
+    <div class="row gap-12"><div class="avatar avatar-sm">${initials(name)}</div><div><div class="t-small" style="font-weight:700;">${name}</div><div class="t-caption">Melamar untuk ${project} · ${price}</div></div></div>
+    <div class="row gap-8"><button class="btn btn-secondary btn-sm" onclick="go('talent-profile')">Lihat</button><button class="btn btn-primary btn-sm" onclick="toast('Kamu menerima aplikasi ini')">Terima</button></div>
+  </div>`;
+}
+function deadlineRow(title, date, tone){
+  return `<div class="row-between"><div class="row gap-10"><div class="mark" style="width:32px;height:32px;border-radius:8px;background:${tone==='warning'?'var(--warning-bg)':'var(--bg)'};color:${tone==='warning'?'var(--warning)':'var(--text-muted)'};display:flex;align-items:center;justify-content:center;">${icon('clock')}</div><div class="t-small" style="font-weight:600;">${title}</div></div><div class="t-small ${tone==='warning'?'':'muted'}" style="font-weight:700;color:${tone==='warning'?'var(--warning)':''}">${date}</div></div>`;
+}
+
+function screenUmkmProjects(){
+  return shell('Proyek', `
+    <div class="row-between mb-20"><h1 class="t-h1">Proyek</h1><button class="btn btn-primary" onclick="go('post-project')">${icon('plus')} Post Proyek Baru</button></div>
+    <div class="tabs">
+      <button class="tab-btn active">Aktif (3)</button>
+      <button class="tab-btn">Menunggu Aplikasi (2)</button>
+      <button class="tab-btn">Selesai (14)</button>
+      <button class="tab-btn">Draf (1)</button>
+    </div>
+    <div class="grid grid-3">
+      ${projectCardUmkm('Desain Konten Instagram', 'Nadia Putri', 65, 'In Progress', 'Rp1.500.000', '18 Sep 2026')}
+      ${projectCardUmkm('Logo & Panduan Merek', 'Farhan Maulana', 30, 'In Progress', 'Rp2.000.000', '24 Sep 2026')}
+      ${projectCardUmkm('Setup Toko Shopee', 'Bagas Wirawan', 90, 'Menunggu Review', 'Rp600.000', '16 Sep 2026')}
+    </div>
+  `);
+}
+function projectCardUmkm(title, student, progress, status, budget, deadline){
+  return `
+  <div class="card project-card card-hover clickable" onclick="go('my-project')">
+    <div class="row-between mb-10"><span class="badge badge-info">${status}</span><span class="t-caption">${budget}</span></div>
+    <div class="t-h3" style="font-size:16px;">${title}</div>
+    <div class="row gap-8 t-small muted mt-8">${icon('user')} ${student}</div>
+    <div class="progress-track mt-12"><div class="progress-fill" style="width:${progress}%;"></div></div>
+    <div class="row-between t-caption mt-8"><span>${progress}% selesai</span><span>Tenggat ${deadline}</span></div>
+  </div>`;
+}
+
+function screenUmkmPayments(){
+  return shell('Pembayaran', `
+    <h1 class="t-h1 mb-20">Pembayaran</h1>
+    <div class="grid grid-3 mb-20">
+      <div class="card card-pad"><div class="t-caption">TOTAL DIBAYARKAN</div><div class="t-h1 mt-8">Rp8.400.000</div></div>
+      <div class="card card-pad"><div class="t-caption">DITAHAN (ESCROW)</div><div class="t-h1 mt-8">Rp1.100.000</div></div>
+      <div class="card card-pad"><div class="t-caption">BIAYA PLATFORM (12%)</div><div class="t-h1 mt-8">Rp1.008.000</div></div>
+    </div>
+    <div class="card">
+      <table class="simple-table">
+        <tr><th>Proyek</th><th>Talenta</th><th>Jumlah</th><th>Status</th><th>Tanggal</th></tr>
+        <tr><td>Setup Toko Shopee — Milestone 2</td><td>Bagas Wirawan</td><td>Rp300.000</td><td><span class="badge badge-warning">Ditahan</span></td><td>14 Sep 2026</td></tr>
+        <tr><td>Desain Konten Instagram — Milestone 1</td><td>Nadia Putri</td><td>Rp500.000</td><td><span class="badge badge-success">Dicairkan</span></td><td>10 Sep 2026</td></tr>
+        <tr><td>Rapikan Pembukuan — Selesai</td><td>Dewi Lestari</td><td>Rp750.000</td><td><span class="badge badge-success">Dicairkan</span></td><td>2 Sep 2026</td></tr>
+        <tr><td>Listing Premium — Logo & Merek</td><td>—</td><td>Rp50.000</td><td><span class="badge badge-success">Dicairkan</span></td><td>28 Agu 2026</td></tr>
+      </table>
+    </div>
+  `);
+}
+
+/* ============================================================
+   POST PROJECT WIZARD
+   ============================================================ */
+const CATEGORIES = [
+  {key:'website', label:'Website', icon:'folder'},
+  {key:'branding', label:'Branding', icon:'award'},
+  {key:'design', label:'Desain Grafis', icon:'briefcase'},
+  {key:'social', label:'Media Sosial', icon:'chat'},
+  {key:'marketplace', label:'Marketplace', icon:'search'},
+  {key:'bookkeeping', label:'Pembukuan Digital', icon:'wallet'},
+  {key:'other', label:'Lainnya', icon:'plus'},
+];
+function screenPostProject(){
+  const step = state.wizardStep;
+  const steps = ['Kategori','Detail Proyek','Budget & Tenggat','Milestone','Tinjau & Publikasi'];
+  return shell('Post Proyek Baru', `
+    <div class="content-narrow" style="margin:0 auto;">
+    <button class="link-btn mb-16" onclick="go('umkm-dashboard')">${icon('chevLeft')} Batalkan</button>
+    <div class="wizard-head">
+      ${steps.map((s,i)=>`<div class="wizard-step ${i+1<step?'done':''} ${i+1===step?'active':''}"><div class="circ">${i+1<step?icon('check'):i+1}</div>${s}</div>`).join('')}
+    </div>
+    <div class="card card-pad" style="padding:28px;">
+      ${step===1?wizardStep1():step===2?wizardStep2():step===3?wizardStep3():step===4?wizardStep4():wizardStep5()}
+    </div>
+    </div>
+  `);
+}
+function wizardStep1(){
+  return `
+  <h2 class="t-h2">Pilih kategori proyek</h2>
+  <p class="t-small muted mt-4">Ini membantu kami merekomendasikan mahasiswa yang tepat untuk proyekmu.</p>
+  <div class="t-caption mt-20 mb-8">TEMPLATE POPULER</div>
+  <div class="grid grid-4">
+    ${TEMPLATES.map(t=>`<div class="template-card" onclick="state.wizardData.template='${t.title}';state.wizardStep=2;render();"><div class="ic">${icon(t.icon)}</div><div class="t-small" style="font-weight:700;">${t.title}</div><div class="t-caption mt-4">${t.desc}</div></div>`).join('')}
+  </div>
+  <div class="t-caption mt-24 mb-8">ATAU PILIH KATEGORI SENDIRI</div>
+  <div class="grid grid-4">
+    ${CATEGORIES.map(c=>`<div class="template-card" onclick="state.wizardData.category='${c.label}';state.wizardStep=2;render();"><div class="ic">${icon(c.icon)}</div><div class="t-small" style="font-weight:700;">${c.label}</div></div>`).join('')}
+  </div>
+  `;
+}
+function wizardStep2(){
+  return `
+  <h2 class="t-h2">Detail proyek</h2>
+  <p class="t-small muted mt-4">Jelaskan apa yang kamu butuhkan sejelas mungkin.</p>
+  <div class="mt-20">
+    <div class="field"><label>Judul Proyek</label><input class="input" value="${state.wizardData.template||''}" placeholder="contoh: Desain Konten Instagram Bulanan"></div>
+    <div class="field"><label>Deskripsi</label><textarea class="input" placeholder="Jelaskan kebutuhanmu, gaya yang diinginkan, dan referensi jika ada...">Butuh bantuan membuat 12 desain feed dan 4 konten reels untuk promosi menu baru bulan ini. Gaya visual simpel dan hangat, sesuai suasana kedai kopi kami.</textarea></div>
+    <div class="field"><label>Deliverable yang diharapkan</label>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label class="checkbox-row"><input type="checkbox" checked> 12 desain feed Instagram</label>
+        <label class="checkbox-row"><input type="checkbox" checked> 4 video reels pendek</label>
+        <label class="checkbox-row"><input type="checkbox"> Kalender konten bulanan</label>
+      </div>
+    </div>
+    <div class="field"><label>Lokasi</label><input class="input" value="Jakarta Selatan · Bisa remote"></div>
+  </div>
+  <div class="row-between mt-24"><button class="btn btn-secondary" onclick="state.wizardStep=1;render();">${icon('chevLeft')} Kembali</button><button class="btn btn-primary" onclick="state.wizardStep=3;render();">Lanjutkan</button></div>
+  `;
+}
+function wizardStep3(){
+  return `
+  <h2 class="t-h2">Budget & tenggat waktu</h2>
+  <p class="t-small muted mt-4">Kamu bisa sesuaikan angkanya nanti setelah melihat aplikasi yang masuk.</p>
+  <div class="mt-20">
+    <div class="field"><label>Rentang Budget</label>
+      <div class="row gap-12"><input class="input" placeholder="Minimum (Rp)" value="1.200.000"><input class="input" placeholder="Maksimum (Rp)" value="1.800.000"></div>
+    </div>
+    <div class="field"><label>Tenggat Waktu</label><input class="input" type="date" value="2026-09-25"></div>
+    <div class="field"><label>Jumlah Revisi Termasuk</label><select class="input"><option>1 kali revisi</option><option selected>2 kali revisi</option><option>3 kali revisi</option><option>Tanpa batas (wajar)</option></select></div>
+    <div class="field"><label class="checkbox-row"><input type="checkbox"><span>Jadikan listing premium — Rp50.000 (tampil lebih atas & badge Prioritas)</span></label></div>
+  </div>
+  <div class="row-between mt-24"><button class="btn btn-secondary" onclick="state.wizardStep=2;render();">${icon('chevLeft')} Kembali</button><button class="btn btn-primary" onclick="state.wizardStep=4;render();">Lanjutkan</button></div>
+  `;
+}
+function wizardStep4(){
+  return `
+  <h2 class="t-h2">Susun milestone</h2>
+  <p class="t-small muted mt-4">Pecah proyek jadi tahap-tahap kecil agar progres mudah dipantau dan pembayaran lebih aman.</p>
+  <div class="mt-20" style="display:flex;flex-direction:column;gap:12px;">
+    ${milestoneFormRow('Konsep & Moodboard', 'Rp400.000', '2026-09-19')}
+    ${milestoneFormRow('Draf Konten', 'Rp600.000', '2026-09-22')}
+    ${milestoneFormRow('Revisi & Pengiriman Akhir', 'Rp500.000', '2026-09-25')}
+  </div>
+  <button class="btn btn-ghost mt-12" onclick="toast('Milestone baru ditambahkan')">${icon('plus')} Tambah Milestone</button>
+  <div class="row-between mt-24"><button class="btn btn-secondary" onclick="state.wizardStep=3;render();">${icon('chevLeft')} Kembali</button><button class="btn btn-primary" onclick="state.wizardStep=5;render();">Lanjutkan</button></div>
+  `;
+}
+function milestoneFormRow(title, amount, date){
+  return `
+  <div class="card card-pad">
+    <div class="grid grid-3">
+      <div class="field" style="margin:0;"><label>Nama Milestone</label><input class="input" value="${title}"></div>
+      <div class="field" style="margin:0;"><label>Nilai Pembayaran</label><input class="input" value="${amount}"></div>
+      <div class="field" style="margin:0;"><label>Tenggat</label><input class="input" type="date" value="${date}"></div>
+    </div>
+  </div>`;
+}
+function wizardStep5(){
+  return `
+  <h2 class="t-h2">Tinjau & publikasikan</h2>
+  <p class="t-small muted mt-4">Periksa kembali sebelum proyek ini tayang dan bisa dilamar mahasiswa.</p>
+  <div class="card card-pad mt-20">
+    <div class="row-between"><span class="badge badge-primary">Media Sosial</span><span class="t-small" style="font-weight:700;">Rp1.200.000 – Rp1.800.000</span></div>
+    <h3 class="t-h3 mt-12">Desain Konten Instagram Bulanan</h3>
+    <p class="t-small muted mt-8">Butuh bantuan membuat 12 desain feed dan 4 konten reels untuk promosi menu baru bulan ini. Gaya visual simpel dan hangat, sesuai suasana kedai kopi kami.</p>
+    <div class="divider"></div>
+    <div class="grid grid-3">
+      <div><div class="t-caption">TENGGAT</div><div class="t-small mt-4" style="font-weight:600;">25 Sep 2026</div></div>
+      <div><div class="t-caption">REVISI</div><div class="t-small mt-4" style="font-weight:600;">2 kali</div></div>
+      <div><div class="t-caption">MILESTONE</div><div class="t-small mt-4" style="font-weight:600;">3 tahap</div></div>
+    </div>
+  </div>
+  <div class="checkbox-row mt-20"><input type="checkbox" checked style="margin-top:3px;"><span class="t-small muted">Saya konfirmasi detail proyek ini sudah benar dan siap ditayangkan ke talenta mahasiswa.</span></div>
+  <div class="row-between mt-20"><button class="btn btn-secondary" onclick="state.wizardStep=4;render();">${icon('chevLeft')} Kembali</button>
+    <div class="row gap-10"><button class="btn btn-secondary" onclick="toast('Disimpan sebagai draf')">Simpan Draf</button><button class="btn btn-primary" onclick="toast('Proyek berhasil dipublikasikan!');state.wizardStep=1;go('umkm-projects')">Publikasikan Proyek</button></div>
+  </div>
+  `;
+}
+
+/* ============================================================
+   FIND TALENT
+   ============================================================ */
+function screenFindTalent(){
+  return shell('Cari Talenta', `
+    <h1 class="t-h1 mb-4">Cari Talenta</h1>
+    <p class="t-body muted mb-20">Temukan talenta terverifikasi yang cocok untuk proyekmu.</p>
+    <div class="row gap-10 mb-20">
+      <div class="input-group" style="flex:1;"><span class="input-prefix">${icon('search')}</span><input class="input" style="border-radius:0 var(--r-sm) var(--r-sm) 0;" placeholder="Cari nama, skill, atau kategori..."></div>
+      <button class="btn btn-secondary">${icon('filter')} Filter</button>
+    </div>
+    <div class="row gap-8 mb-20" style="flex-wrap:wrap;">
+      <span class="pill-tab active">Semua</span><span class="pill-tab">Website</span><span class="pill-tab">Branding</span><span class="pill-tab">Media Sosial</span><span class="pill-tab">Marketplace</span><span class="pill-tab">Pembukuan</span>
+    </div>
+    <div class="grid grid-3">${STUDENTS.map(s=>talentCardHtml(s)).join('')}</div>
+  `);
+}
+
+function screenTalentProfile(){
+  const s = STUDENTS.find(x=>x.id===state.selectedStudent) || STUDENTS[0];
+  return shell('Profil Talenta', `
+    <button class="link-btn mb-16" onclick="go('find-talent')">${icon('chevLeft')} Kembali ke Cari Talenta</button>
+    <div class="grid" style="grid-template-columns:2fr 1fr;">
+      <div>
+        <div class="card card-pad" style="padding:28px;">
+          <div class="row gap-16" style="align-items:flex-start;">
+            <div class="avatar avatar-lg" style="background:${s.avatarBg};color:var(--text);width:76px;height:76px;font-size:26px;">${initials(s.name)}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="row gap-8"><h1 class="t-h2">${s.name}</h1><span class="badge badge-success">${icon('check')} Terverifikasi</span></div>
+              <div class="t-small muted mt-4">${s.major} · ${s.uni}</div>
+              <div class="row gap-16 mt-10">
+                <div class="rating">${icon('star')} ${s.rating} <span class="faint" style="font-weight:400;">(${s.completed} proyek)</span></div>
+                <div class="row gap-6 t-small muted">${icon('mapPin')} ${s.city}</div>
+              </div>
+            </div>
+          </div>
+          <p class="t-body mt-16">${s.bio}</p>
+          <div class="skills mt-12">${s.skills.map(k=>`<span class="chip">${k}</span>`).join('')}</div>
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Portofolio</h2></div>
+        <div class="grid grid-3">
+          ${[1,2,3].map(i=>`<div class="card" style="overflow:hidden;"><div class="skeleton-photo" style="height:120px;"></div><div class="card-pad" style="padding:12px;"><div class="t-small" style="font-weight:700;">Proyek Portofolio ${i}</div><div class="t-caption mt-4">Untuk UMKM lokal</div></div></div>`).join('')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Ulasan (${s.completed})</h2></div>
+        <div class="card card-pad" style="display:flex;flex-direction:column;gap:16px;">
+          <div><div class="row-between"><div class="row gap-8"><div class="avatar avatar-sm">RS</div><b class="t-small">Ratna Sulistiowati</b></div><div class="rating">${icon('star')}${icon('star')}${icon('star')}${icon('star')}${icon('star')}</div></div><p class="t-small muted mt-8">Komunikasinya lancar dan hasil kerjanya rapi, sesuai ekspektasi kami.</p></div>
+          <div class="divider" style="margin:0;"></div>
+          <div><div class="row-between"><div class="row gap-8"><div class="avatar avatar-sm">HW</div><b class="t-small">Hendra Wibowo</b></div><div class="rating">${icon('star')}${icon('star')}${icon('star')}${icon('star')}${icon('star')}</div></div><p class="t-small muted mt-8">Selalu tepat waktu mengirim update progres. Recommended!</p></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card card-pad">
+          <div class="t-caption">MULAI DARI</div>
+          <div class="t-h1 mt-4">${s.price}</div>
+          <button class="btn btn-primary btn-block mt-16" onclick="toast('Undangan proyek terkirim ke '+'${s.name}')">Undang ke Proyek</button>
+          <button class="btn btn-secondary btn-block mt-8" onclick="go('messages')">${icon('chat')} Kirim Pesan</button>
+          <div class="divider"></div>
+          <div class="t-small row-between mb-8"><span class="muted">Waktu respons</span><span style="font-weight:600;">± 3 jam</span></div>
+          <div class="t-small row-between mb-8"><span class="muted">Proyek selesai</span><span style="font-weight:600;">${s.completed}</span></div>
+          <div class="t-small row-between"><span class="muted">Ketersediaan</span><span class="badge badge-success">Tersedia</span></div>
+        </div>
+        <div class="card card-pad mt-16">
+          <div class="t-small" style="font-weight:700;">${icon('award')} Sertifikasi</div>
+          <div class="t-small muted mt-8">Google Digital Marketing · Canva Certified Educator</div>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+/* ============================================================
+   MAHASISWA DASHBOARD
+   ============================================================ */
+function screenMahaDashboard(){
+  return shell('Dashboard', `
+    <h1 class="t-h1 mb-4">Halo, Nadia 👋</h1>
+    <p class="t-body muted mb-20">Ini progres proyek dan peluang baru buat kamu minggu ini.</p>
+
+    <div class="grid grid-4 mb-20">
+      <div class="card card-pad"><div class="t-caption">PROYEK AKTIF</div><div class="t-h1 mt-8">2</div></div>
+      <div class="card card-pad"><div class="t-caption">PENGHASILAN BULAN INI</div><div class="t-h1 mt-8">Rp2,1jt</div></div>
+      <div class="card card-pad"><div class="t-caption">PROYEK SELESAI</div><div class="t-h1 mt-8">23</div></div>
+      <div class="card card-pad"><div class="t-caption">RATING</div><div class="t-h1 mt-8">4.9</div></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:2fr 1fr;">
+      <div>
+        <div class="section-title"><h2 class="t-h3">Proyek Aktif</h2><a class="link-btn" href="#" onclick="go('maha-projects');return false;">Lihat Semua</a></div>
+        <div class="card">
+          ${umkmActiveProjectRow('Desain Konten Instagram', 'Kopi Anteng', 65, 'In Progress', 'Draf Konten', '18 Sep 2026')}
+          ${umkmActiveProjectRow('Ilustrasi Kemasan Produk', 'Snack Kriuk Ibu Tini', 40, 'In Progress', 'Sketsa Final', '21 Sep 2026')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Rekomendasi Untukmu</h2></div>
+        <div class="grid grid-2">
+          ${PROJECTS.slice(0,4).map(p=>projectCardMaha(p)).join('')}
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title"><h2 class="t-h3">Kelengkapan Profil</h2></div>
+        <div class="card card-pad">
+          <div class="row-between t-caption mb-4"><span>Profil</span><span>80%</span></div>
+          <div class="progress-track mb-12"><div class="progress-fill" style="width:80%;"></div></div>
+          <div class="t-small muted">Tambahkan 2 item portofolio lagi untuk melengkapi profil kamu.</div>
+          <button class="btn btn-secondary btn-block mt-12" onclick="go('portfolio')">Lengkapi Profil</button>
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Tenggat Mendatang</h2></div>
+        <div class="card card-pad" style="display:flex;flex-direction:column;gap:14px;">
+          ${deadlineRow('Draf Konten — Kopi Anteng', '18 Sep', 'warning')}
+          ${deadlineRow('Sketsa Final — Snack Kriuk', '21 Sep', 'neutral')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Sertifikat Terbaru</h2></div>
+        <div class="card card-pad row gap-12">
+          <div class="mark" style="width:40px;height:40px;border-radius:8px;background:var(--primary-light);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;">${icon('award')}</div>
+          <div><div class="t-small" style="font-weight:700;">Digital Bookkeeping Specialist</div><div class="t-caption">Diterbitkan 2 Sep 2026</div></div>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+/* ============================================================
+   FIND PROJECTS (student)
+   ============================================================ */
+function projectCardMaha(p){
+  return `
+  <div class="card project-card card-hover clickable" onclick="go('project-detail',{selectedProject:'${p.id}'})">
+    <div class="row-between mb-10"><span class="badge badge-primary">${p.category}</span><span class="t-caption">${p.applicants} pelamar</span></div>
+    <div class="t-h3" style="font-size:16px;">${p.title}</div>
+    <div class="t-small muted mt-6">${p.umkm} · ${p.location}</div>
+    <p class="t-small muted mt-10" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.desc}</p>
+    <div class="row-between mt-12"><span class="t-small" style="font-weight:700;">${p.budget}</span><span class="t-caption">Tenggat ${p.deadline}</span></div>
+  </div>`;
+}
+function screenFindProjects(){
+  return shell('Cari Proyek', `
+    <h1 class="t-h1 mb-4">Cari Proyek</h1>
+    <p class="t-body muted mb-20">Temukan proyek UMKM yang cocok dengan skill kamu.</p>
+    <div class="row gap-10 mb-20">
+      <div class="input-group" style="flex:1;"><span class="input-prefix">${icon('search')}</span><input class="input" style="border-radius:0 var(--r-sm) var(--r-sm) 0;" placeholder="Cari judul proyek, kategori, atau UMKM..."></div>
+      <button class="btn btn-secondary">${icon('filter')} Filter</button>
+    </div>
+    <div class="row gap-8 mb-20" style="flex-wrap:wrap;">
+      <span class="pill-tab active">Semua</span><span class="pill-tab">Website</span><span class="pill-tab">Branding</span><span class="pill-tab">Desain Grafis</span><span class="pill-tab">Media Sosial</span><span class="pill-tab">Marketplace</span><span class="pill-tab">Pembukuan</span>
+    </div>
+    <div class="grid grid-3">${PROJECTS.map(p=>projectCardMaha(p)).join('')}</div>
+  `);
+}
+
+function screenProjectDetail(){
+  const p = PROJECTS.find(x=>x.id===state.selectedProject) || PROJECTS[0];
+  return shell('Detail Proyek', `
+    <button class="link-btn mb-16" onclick="go('find-projects')">${icon('chevLeft')} Kembali ke Cari Proyek</button>
+    <div class="grid" style="grid-template-columns:2fr 1fr;">
+      <div>
+        <div class="card card-pad" style="padding:28px;">
+          <span class="badge badge-primary">${p.category}</span>
+          <h1 class="t-h2 mt-12">${p.title}</h1>
+          <div class="row gap-16 mt-10 t-small muted">
+            <div class="row gap-6">${icon('briefcase')} ${p.umkm}</div>
+            <div class="row gap-6">${icon('mapPin')} ${p.location}</div>
+          </div>
+          <div class="divider"></div>
+          <h3 class="t-h3">Deskripsi Proyek</h3>
+          <p class="t-body muted mt-8">${p.desc} Kami ingin hasil yang selaras dengan identitas usaha kami — hangat, ramah, dan mudah dipahami pelanggan sehari-hari.</p>
+          <h3 class="t-h3 mt-20">Deliverable</h3>
+          <ul style="margin-top:8px;">
+            <li class="row gap-8 t-small" style="padding:5px 0;">${icon('check')} Sesuai brief yang dijelaskan</li>
+            <li class="row gap-8 t-small" style="padding:5px 0;">${icon('check')} File sumber (editable)</li>
+            <li class="row gap-8 t-small" style="padding:5px 0;">${icon('check')} 2 kali revisi termasuk dalam harga</li>
+          </ul>
+          <h3 class="t-h3 mt-20">Skill yang Dibutuhkan</h3>
+          <div class="skills mt-8">${['Desain','Copywriting','Manajemen Waktu'].map(k=>`<span class="chip">${k}</span>`).join('')}</div>
+          <h3 class="t-h3 mt-20">Milestone Proyek</h3>
+          <div class="mt-8">
+            ${milestonePreview('Konsep Awal', 'Rp400.000')}
+            ${milestonePreview('Pengerjaan Utama', 'Rp700.000')}
+            ${milestonePreview('Revisi & Pengiriman Akhir', 'Rp400.000')}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-pad">
+          <div class="t-caption">BUDGET PROYEK</div>
+          <div class="t-h1 mt-4">${p.budget}</div>
+          <div class="divider"></div>
+          <div class="t-small row-between mb-10"><span class="muted">Tenggat</span><span style="font-weight:600;">${p.deadline}</span></div>
+          <div class="t-small row-between mb-10"><span class="muted">Pelamar</span><span style="font-weight:600;">${p.applicants} mahasiswa</span></div>
+          <div class="t-small row-between mb-16"><span class="muted">Revisi</span><span style="font-weight:600;">2 kali</span></div>
+          <button class="btn btn-primary btn-block" onclick="go('apply-project',{selectedProject:'${p.id}'})">Lamar Proyek</button>
+        </div>
+        <div class="card card-pad mt-16">
+          <div class="row gap-10"><div class="avatar avatar-sm">${initials(p.umkm)}</div><div><div class="t-small" style="font-weight:700;">${p.umkm}</div><div class="t-caption">${icon('check')} Terverifikasi</div></div></div>
+          <div class="t-small muted mt-10">Bergabung sejak Jan 2026 · 6 proyek diposting</div>
+        </div>
+      </div>
+    </div>
+  `);
+}
+function milestonePreview(title, amount){
+  return `<div class="row-between" style="padding:10px 0;border-bottom:1px solid var(--border);"><div class="row gap-10"><div class="m-dot" style="width:22px;height:22px;">${icon('folder')}</div><span class="t-small" style="font-weight:600;">${title}</span></div><span class="t-small muted">${amount}</span></div>`;
+}
+
+function screenApplyProject(){
+  const p = PROJECTS.find(x=>x.id===state.selectedProject) || PROJECTS[0];
+  return shell('Lamar Proyek', `
+    <button class="link-btn mb-16" onclick="go('project-detail',{selectedProject:'${p.id}'})">${icon('chevLeft')} Kembali ke Detail Proyek</button>
+    <div class="content-narrow" style="margin:0;">
+      <h1 class="t-h1">Lamar: ${p.title}</h1>
+      <p class="t-body muted mt-4">Tulis proposal singkat yang menunjukkan kenapa kamu cocok untuk proyek ini.</p>
+      <div class="card card-pad mt-20" style="padding:24px;">
+        <div class="field"><label>Proposal Kamu</label><textarea class="input" style="min-height:130px;" placeholder="Jelaskan pendekatanmu untuk proyek ini...">Saya sudah beberapa kali membuat konten Instagram untuk usaha F&B lokal dan paham cara membuat konten yang hangat dan relatable. Saya bisa mulai riset kompetitor minggu ini juga.</textarea></div>
+        <div class="field"><label>Pengalaman Relevan</label><textarea class="input" placeholder="Ceritakan pengalaman atau proyek serupa yang pernah kamu kerjakan...">Pernah mengerjakan konten bulanan untuk 3 kedai kopi di Jakarta dan Depok.</textarea></div>
+        <div class="grid grid-2">
+          <div class="field"><label>Estimasi Waktu Selesai</label><select class="input"><option>3 hari</option><option selected>5 hari</option><option>1 minggu</option><option>2 minggu</option></select></div>
+          <div class="field"><label>Harga yang Diajukan</label><input class="input" value="Rp1.450.000"></div>
+        </div>
+        <div class="field"><label>Lampirkan Portofolio (opsional)</label>
+          <div class="card" style="border-style:dashed;padding:20px;text-align:center;">${icon('paperclip')}<div class="t-small mt-8">Pilih item dari portofolio kamu atau <span class="link-btn">unggah baru</span></div></div>
+        </div>
+      </div>
+      <div class="row-between mt-20">
+        <button class="btn btn-secondary" onclick="go('project-detail',{selectedProject:'${p.id}'})">Batal</button>
+        <button class="btn btn-primary btn-lg" onclick="toast('Lamaran berhasil dikirim!');go('find-projects')">Kirim Lamaran</button>
+      </div>
+    </div>
+  `);
+}
+
+function screenMahaProjects(){
+  return shell('Proyek Saya', `
+    <h1 class="t-h1 mb-20">Proyek Saya</h1>
+    <div class="tabs">
+      <button class="tab-btn active">Aktif (2)</button>
+      <button class="tab-btn">Lamaran Terkirim (4)</button>
+      <button class="tab-btn">Selesai (23)</button>
+    </div>
+    <div class="grid grid-3">
+      ${projectCardUmkm('Desain Konten Instagram', 'Kopi Anteng', 65, 'In Progress', 'Rp1.500.000', '18 Sep 2026')}
+      ${projectCardUmkm('Ilustrasi Kemasan Produk', 'Snack Kriuk Ibu Tini', 40, 'In Progress', 'Rp900.000', '21 Sep 2026')}
+    </div>
+  `);
+}
+
+function screenPortfolio(){
+  return shell('Portofolio', `
+    <div class="row-between mb-20"><h1 class="t-h1">Portofolio</h1><button class="btn btn-primary" onclick="toast('Item portofolio ditambahkan')">${icon('plus')} Tambah Item</button></div>
+    <div class="grid grid-3">
+      ${[1,2,3,4,5,6].map(i=>`<div class="card" style="overflow:hidden;"><div class="skeleton-photo" style="height:150px;"></div><div class="card-pad"><div class="t-small" style="font-weight:700;">Proyek Portofolio ${i}</div><div class="t-caption mt-4">Desain Konten · UMKM Lokal</div></div></div>`).join('')}
+    </div>
+  `);
+}
+function screenEarnings(){
+  return shell('Penghasilan', `
+    <h1 class="t-h1 mb-20">Penghasilan</h1>
+    <div class="grid grid-3 mb-20">
+      <div class="card card-pad"><div class="t-caption">TOTAL PENGHASILAN</div><div class="t-h1 mt-8">Rp18.750.000</div></div>
+      <div class="card card-pad"><div class="t-caption">BULAN INI</div><div class="t-h1 mt-8">Rp2.100.000</div></div>
+      <div class="card card-pad"><div class="t-caption">MENUNGGU PENCAIRAN</div><div class="t-h1 mt-8">Rp300.000</div></div>
+    </div>
+    <div class="card">
+      <table class="simple-table">
+        <tr><th>Proyek</th><th>UMKM</th><th>Jumlah</th><th>Status</th><th>Tanggal</th></tr>
+        <tr><td>Setup Toko Shopee — Milestone 2</td><td>Snack Kriuk Ibu Tini</td><td>Rp300.000</td><td><span class="badge badge-warning">Ditahan</span></td><td>14 Sep 2026</td></tr>
+        <tr><td>Desain Konten Instagram — Milestone 1</td><td>Kopi Anteng</td><td>Rp500.000</td><td><span class="badge badge-success">Dicairkan</span></td><td>10 Sep 2026</td></tr>
+        <tr><td>Rapikan Pembukuan — Selesai</td><td>Laundry Kilat Bersih</td><td>Rp750.000</td><td><span class="badge badge-success">Dicairkan</span></td><td>2 Sep 2026</td></tr>
+      </table>
+    </div>
+  `);
+}
+
+/* ============================================================
+   MY PROJECT (shared workspace)
+   ============================================================ */
+function screenMyProject(){
+  const isUmkm = state.role==='umkm';
+  return shell('Proyek Saya', `
+    <button class="link-btn mb-16" onclick="go('${isUmkm?'umkm-projects':'maha-projects'}')">${icon('chevLeft')} Kembali ke Proyek</button>
+    <div class="row-between" style="align-items:flex-start;">
+      <div>
+        <h1 class="t-h1">Desain Konten Instagram Bulanan</h1>
+        <div class="row gap-16 mt-8 t-small muted">
+          <div class="row gap-6">${icon('user')} ${isUmkm?'Nadia Putri (Talenta)':'Kopi Anteng (UMKM)'}</div>
+          <div class="row gap-6">${icon('clock')} Tenggat 25 Sep 2026</div>
+        </div>
+      </div>
+      <span class="badge badge-info">In Progress</span>
+    </div>
+
+    <div class="card card-pad mt-20">
+      <div class="row-between t-caption mb-6"><span>Progress Keseluruhan</span><span>65%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:65%;"></div></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:2fr 1fr;margin-top:20px;">
+      <div>
+        <div class="card card-pad">
+          <h2 class="t-h3 mb-8">Linimasa Milestone</h2>
+          ${milestoneTimelineItem('1','Brief & Riset','Selesai','15 Sep 2026','Rp250.000','done')}
+          ${milestoneTimelineItem('2','Desain Awal','Selesai','17 Sep 2026','Rp500.000','done')}
+          ${milestoneTimelineItem('3','Revisi','Sedang Berjalan','20 Sep 2026','Rp500.000','active')}
+          ${milestoneTimelineItem('4','Pengiriman Akhir','Menunggu','25 Sep 2026','Rp250.000','pending')}
+        </div>
+
+        <div class="section-title mt-24"><h2 class="t-h3">Aktivitas Terbaru</h2></div>
+        <div class="card card-pad" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="t-small"><b>Nadia Putri</b> mengirim revisi untuk Milestone 3<div class="t-caption mt-4">3 jam lalu</div></div>
+          <div class="divider" style="margin:0;"></div>
+          <div class="t-small"><b>Kopi Anteng</b> meminta revisi tipografi pada Milestone 3<div class="t-caption mt-4">1 hari lalu</div></div>
+          <div class="divider" style="margin:0;"></div>
+          <div class="t-small"><b>Nadia Putri</b> menyelesaikan Milestone 2<div class="t-caption mt-4">3 hari lalu</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card card-pad">
+          <h3 class="t-h3">Info Proyek</h3>
+          <div class="t-small row-between mt-12"><span class="muted">Total Budget</span><span style="font-weight:700;">Rp1.500.000</span></div>
+          <div class="t-small row-between mt-10"><span class="muted">Revisi Tersisa</span><span style="font-weight:700;">1 dari 2</span></div>
+          <div class="t-small row-between mt-10"><span class="muted">Kategori</span><span style="font-weight:700;">Media Sosial</span></div>
+          <button class="btn btn-secondary btn-block mt-16" onclick="go('messages')">${icon('chat')} Buka Chat</button>
+        </div>
+        <div class="card card-pad mt-16">
+          <div class="row gap-10"><div class="avatar">${isUmkm?'NP':'KA'}</div><div><div class="t-small" style="font-weight:700;">${isUmkm?'Nadia Putri':'Kopi Anteng'}</div><div class="t-caption">${isUmkm?'Universitas Indonesia':'Jakarta Selatan'}</div></div></div>
+          <button class="btn btn-ghost btn-block mt-12" onclick="go('${isUmkm?'talent-profile':'profile'}')">Lihat Profil</button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+function milestoneTimelineItem(num,title,status,date,amount,state_){
+  const dotClass = state_==='done'?'done':state_==='active'?'active':'';
+  const dotContent = state_==='done'?icon('check'):num;
+  const badge = state_==='done'?'badge-success':state_==='active'?'badge-warning':'badge-neutral';
+  return `
+  <div class="milestone-item clickable" onclick="go('milestone-detail')">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div class="m-dot ${dotClass}">${dotContent}</div>
+    </div>
+    <div style="flex:1;">
+      <div class="row-between"><span class="t-small" style="font-weight:700;">Milestone ${num}: ${title}</span><span class="badge ${badge}">${status}</span></div>
+      <div class="t-caption mt-6">Tenggat ${date} · ${amount}</div>
+    </div>
+  </div>`;
+}
+
+function screenMilestoneDetail(){
+  const isUmkm = state.role==='umkm';
+  return shell('Detail Milestone', `
+    <button class="link-btn mb-16" onclick="go('my-project')">${icon('chevLeft')} Kembali ke Proyek</button>
+    <div class="grid" style="grid-template-columns:2fr 1fr;">
+      <div>
+        <div class="card card-pad" style="padding:24px;">
+          <div class="row-between"><h1 class="t-h2">Milestone 3: Revisi</h1><span class="badge badge-warning">Sedang Berjalan</span></div>
+          <p class="t-body muted mt-10">Perbaiki tipografi pada desain feed sesuai catatan, dan ganti foto produk dengan foto terbaru yang sudah dikirim UMKM.</p>
+          <div class="divider"></div>
+          <h3 class="t-h3">Pekerjaan yang Dikirim</h3>
+          <div class="grid grid-3 mt-12">
+            <div class="card" style="overflow:hidden;"><div class="skeleton-photo" style="height:90px;"></div><div class="card-pad" style="padding:10px;"><div class="t-caption">feed_draft_v2.png</div></div></div>
+            <div class="card" style="overflow:hidden;"><div class="skeleton-photo" style="height:90px;"></div><div class="card-pad" style="padding:10px;"><div class="t-caption">feed_draft_v3.png</div></div></div>
+          </div>
+          <div class="t-caption mt-12">Dikirim 13 Sep 2026, 14.20</div>
+          <div class="divider"></div>
+          <h3 class="t-h3">Catatan dari Talenta</h3>
+          <p class="t-small muted mt-8">Sudah saya sesuaikan tipografinya jadi lebih besar dan mudah dibaca. Menunggu foto produk terbaru untuk revisi selanjutnya.</p>
+          ${isUmkm ? `
+          <div class="divider"></div>
+          <h3 class="t-h3">Feedback Kamu</h3>
+          <textarea class="input mt-8" placeholder="Tulis catatan revisi..."></textarea>
+          <div class="row gap-10 mt-14">
+            <button class="btn btn-primary" onclick="toast('Milestone disetujui!');go('my-project')">Setujui Milestone</button>
+            <button class="btn btn-secondary" onclick="go('revision')">Minta Revisi</button>
+          </div>` : `
+          <div class="divider"></div>
+          <div class="card" style="background:var(--info-bg);border-color:transparent;padding:14px;"><div class="t-small" style="color:var(--info);font-weight:600;">Menunggu review dari Kopi Anteng.</div></div>
+          <button class="btn btn-primary mt-14" onclick="toast('Pekerjaan berhasil dikirim')">Kirim Pekerjaan</button>`}
+        </div>
+      </div>
+      <div>
+        <div class="card card-pad">
+          <div class="t-small row-between"><span class="muted">Nilai Pembayaran</span><span style="font-weight:700;">Rp500.000</span></div>
+          <div class="t-small row-between mt-10"><span class="muted">Tenggat</span><span style="font-weight:700;">20 Sep 2026</span></div>
+          <div class="t-small row-between mt-10"><span class="muted">Jumlah Revisi</span><span style="font-weight:700;">1 dari 2</span></div>
+          <div class="t-small row-between mt-10"><span class="muted">Status Persetujuan</span><span class="badge badge-warning">Menunggu</span></div>
+        </div>
+        <div class="card card-pad mt-16">
+          <div class="t-small" style="font-weight:700;">${icon('shield')} Catatan Mentor</div>
+          <p class="t-small muted mt-8">Komposisi desain sudah cukup baik. Sarankan kontras warna teks ditingkatkan sedikit agar lebih mudah dibaca di layar kecil.</p>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function screenRevision(){
+  return shell('Revisi', `
+    <button class="link-btn mb-16" onclick="go('milestone-detail')">${icon('chevLeft')} Kembali ke Milestone</button>
+    <div class="content-narrow" style="margin:0;">
+      <div class="row-between"><h1 class="t-h1">Revisi 1 dari 2</h1><span class="badge badge-warning">Menunggu Talenta</span></div>
+      <div class="card card-pad mt-20">
+        <h3 class="t-h3">Perubahan yang Diminta</h3>
+        <p class="t-body muted mt-8">Tolong sesuaikan lagi tipografinya dan gunakan foto produk yang sudah diperbarui — file terbaru sudah saya kirim lewat chat.</p>
+        <div class="row gap-16 mt-14 t-small muted"><div class="row gap-6">${icon('clock')} Tenggat 16 Sep 2026</div></div>
+      </div>
+
+      <div class="section-title mt-24"><h2 class="t-h3">Riwayat Revisi</h2></div>
+      <div class="card card-pad" style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <div class="row-between"><b class="t-small">Revisi 1</b><span class="badge badge-warning">Menunggu Talenta</span></div>
+          <p class="t-small muted mt-6">Tolong sesuaikan lagi tipografinya dan gunakan foto produk yang sudah diperbarui.</p>
+          <div class="t-caption mt-4">Diminta 13 Sep 2026</div>
+        </div>
+      </div>
+
+      <div class="field mt-20"><label>Tambahkan Permintaan Revisi Baru</label><textarea class="input" placeholder="Jelaskan perubahan yang kamu inginkan..."></textarea></div>
+      <button class="btn btn-primary" onclick="toast('Permintaan revisi terkirim');go('my-project')">Kirim Permintaan Revisi</button>
+    </div>
+  `);
+}
+
+/* ============================================================
+   MESSAGES / NOTIFICATIONS / PROFILE
+   ============================================================ */
+function screenMessages(){
+  const contacts = state.role==='umkm'
+    ? [{n:'Nadia Putri',l:'Sudah saya kirim revisi terbaru ya kak',t:'10:24'},{n:'Farhan Maulana',l:'Baik, saya kerjakan logo hari ini',t:'Kemarin'},{n:'Bagas Wirawan',l:'Toko sudah live, silakan dicek',t:'Sen'}]
+    : [{n:'Kopi Anteng',l:'Terima kasih revisinya, sudah bagus!',t:'10:24'},{n:'Snack Kriuk Ibu Tini',l:'Boleh minta contoh 2 desain lagi?',t:'Kemarin'},{n:'Berkah Furniture',l:'Kapan draf awal bisa kami lihat?',t:'Sen'}];
+  return shell('Pesan', `
+    <div class="card" style="display:grid;grid-template-columns:280px 1fr;min-height:520px;overflow:hidden;">
+      <div style="border-right:1px solid var(--border);">
+        <div style="padding:16px;border-bottom:1px solid var(--border);"><input class="input" placeholder="Cari percakapan..."></div>
+        ${contacts.map((c,i)=>`
+        <div class="row gap-10" style="padding:14px 16px;border-bottom:1px solid var(--border);${i===0?'background:var(--primary-tint);':''}cursor:pointer;">
+          <div class="avatar avatar-sm">${initials(c.n)}</div>
+          <div style="flex:1;min-width:0;"><div class="row-between"><span class="t-small" style="font-weight:700;">${c.n}</span><span class="t-caption">${c.t}</span></div><div class="t-caption" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.l}</div></div>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="padding:16px;border-bottom:1px solid var(--border);" class="row gap-10"><div class="avatar avatar-sm">${initials(contacts[0].n)}</div><b class="t-small">${contacts[0].n}</b></div>
+        <div style="flex:1;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="align-self:flex-start;max-width:70%;"><div class="card card-pad" style="padding:11px 14px;">Halo, apakah desain feed untuk minggu ini sudah bisa dilihat?</div><div class="t-caption mt-4">09:58</div></div>
+          <div style="align-self:flex-end;max-width:70%;"><div class="card card-pad" style="padding:11px 14px;background:var(--primary-light);border-color:transparent;">${contacts[0].l}</div><div class="t-caption mt-4" style="text-align:right;">10:24</div></div>
+        </div>
+        <div style="padding:14px 16px;border-top:1px solid var(--border);" class="row gap-10">
+          <button class="icon-btn">${icon('paperclip')}</button>
+          <input class="input" placeholder="Tulis pesan...">
+          <button class="btn btn-primary btn-icon">${icon('send')}</button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+function screenNotifications(){
+  return shell('Notifikasi', `
+    <h1 class="t-h1 mb-20">Notifikasi</h1>
+    <div class="card">
+      ${notifRow('folder','Nadia Putri mengirim revisi untuk Milestone 3','3 jam lalu',true)}
+      ${notifRow('wallet','Pembayaran Rp500.000 berhasil dicairkan','1 hari lalu',true)}
+      ${notifRow('user','Kirana Ayu melamar proyek Desain Konten Instagram','1 hari lalu',false)}
+      ${notifRow('shield','Verifikasi usaha kamu telah disetujui','3 hari lalu',false)}
+      ${notifRow('clock','Tenggat proyek Setup Toko Shopee 2 hari lagi','4 hari lalu',false)}
+    </div>
+  `);
+}
+function notifRow(ic,text,time,unread){
+  return `<div class="row gap-14" style="padding:16px 20px;border-bottom:1px solid var(--border);${unread?'background:var(--primary-tint);':''}">
+    <div class="mark" style="width:36px;height:36px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--primary-dark);flex-shrink:0;">${icon(ic)}</div>
+    <div style="flex:1;"><div class="t-small" style="font-weight:600;">${text}</div><div class="t-caption mt-4">${time}</div></div>
+    ${unread?'<div class="dot-badge" style="position:static;background:var(--clay);"></div>':''}
+  </div>`;
+}
+
+function screenProfile(){
+  const isUmkm = state.role==='umkm';
+  return shell('Profil', `
+    <div class="card card-pad" style="padding:28px;">
+      <div class="row gap-16">
+        <div class="avatar avatar-lg" style="width:76px;height:76px;font-size:26px;">${isUmkm?'KA':'NP'}</div>
+        <div style="flex:1;"><div class="row gap-8"><h1 class="t-h2">${isUmkm?'Kopi Anteng':'Nadia Putri'}</h1><span class="badge badge-success">${icon('check')} Terverifikasi</span></div><div class="t-small muted mt-4">${isUmkm?'Kuliner · Jakarta Selatan':'Desain Komunikasi Visual · Universitas Indonesia'}</div></div>
+        <button class="btn btn-secondary">Edit Profil</button>
+      </div>
+    </div>
+    <div class="grid grid-2 mt-20">
+      <div class="card card-pad">
+        <h3 class="t-h3">Informasi ${isUmkm?'Usaha':'Pribadi'}</h3>
+        <div class="field mt-16"><label>${isUmkm?'Nama Usaha':'Nama Lengkap'}</label><input class="input" value="${isUmkm?'Kopi Anteng':'Nadia Putri'}"></div>
+        <div class="field"><label>Email</label><input class="input" value="${isUmkm?'halo@kopianteng.id':'nadia.putri@ui.ac.id'}"></div>
+        <div class="field"><label>Nomor WhatsApp</label><input class="input" value="0812xxxxxxx"></div>
+        <div class="field" style="margin-bottom:0;"><label>${isUmkm?'Alamat Usaha':'Bio Singkat'}</label><textarea class="input">${isUmkm?'Jl. Kemang Raya No. 12, Jakarta Selatan':'Fokus di konten sosial media untuk F&B dan retail lokal selama 2 tahun terakhir.'}</textarea></div>
+        <button class="btn btn-primary mt-16" onclick="toast('Perubahan disimpan')">Simpan Perubahan</button>
+      </div>
+      <div class="card card-pad">
+        <h3 class="t-h3">Status Akun</h3>
+        <div class="t-small row-between mt-16"><span class="muted">Verifikasi</span><span class="badge badge-success">Terverifikasi</span></div>
+        <div class="t-small row-between mt-12"><span class="muted">Bergabung Sejak</span><span style="font-weight:600;">Jan 2026</span></div>
+        <div class="t-small row-between mt-12"><span class="muted">Rating</span><span style="font-weight:600;">${icon('star')} 4.9</span></div>
+        <div class="divider"></div>
+        <button class="btn btn-secondary btn-block" onclick="go('landing');state.role=null;">${icon('logout')} Keluar</button>
+      </div>
+    </div>
+  `);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+render();
+</script>
+</body>
+</html>

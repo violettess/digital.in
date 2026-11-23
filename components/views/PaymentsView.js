@@ -1,6 +1,10 @@
 "use client";
 
+<<<<<<< HEAD
 import { Suspense, useEffect, useMemo, useState } from "react";
+=======
+import { Suspense, useMemo, useState } from "react";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
@@ -17,8 +21,11 @@ import { INVOICE_STATUS_META } from "@/lib/earnings";
 import { MOCK_TODAY } from "@/lib/projects.mock";
 import { buildPayments, buildPaymentInvoices, summarizePayments, monthlySpending } from "@/lib/payments";
 import { formatRupiah, formatTanggal } from "@/lib/format";
+<<<<<<< HEAD
 import { USE_MOCK } from "@/lib/auth/api";
 import { projectsApi } from "@/lib/projects/api";
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 // "Pembayaran" UMKM — pengeluaran ke mahasiswa lewat escrow. Struktur sama
 // dengan EarningsView (ringkasan, grafik, 3 section popup, daftar + drawer).
@@ -82,6 +89,7 @@ function PaymentsPageInner() {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [toast, setToast] = useState(null);
+<<<<<<< HEAD
   const [liveContracts, setLiveContracts] = useState([]);
   const [liveLoading, setLiveLoading] = useState(!USE_MOCK);
   const [liveError, setLiveError] = useState(null);
@@ -94,6 +102,8 @@ function PaymentsPageInner() {
       else setLiveError(res.error.message);
     });
   }, []);
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   const payments = useMemo(() => buildPayments(user.name, MOCK_TODAY, { actions }), [user.name, actions]);
   const invoices = useMemo(() => buildPaymentInvoices(payments), [payments]);
@@ -147,6 +157,7 @@ function PaymentsPageInner() {
       <h1 className="t-h1 mb-4">Pembayaran</h1>
       <p className="t-body muted mb-20">Pantau dana yang kamu bayarkan ke mahasiswa lewat escrow.</p>
 
+<<<<<<< HEAD
       {!USE_MOCK && (
         <div className="card card-pad mb-20">
           <div className="t-small" style={{ fontWeight: 700 }}>Kontrak & Escrow</div>
@@ -242,6 +253,68 @@ function PaymentsPageInner() {
           />
         </>
       )}
+=======
+      <PaymentsSummary summary={summary} onTopUp={() => showToast("Top up saldo deposit belum tersedia di prototipe ini.")} />
+      <IncomeChart
+        months={months}
+        tone="spend"
+        title="Pengeluaran 6 Bulan Terakhir"
+        subtitle="Total yang sudah & sedang dicairkan ke mahasiswa (termasuk biaya layanan) — dana tertahan tidak dihitung"
+      />
+
+      {/* Halaman ini cuma untuk MELIHAT data. Mengelola metode pembayaran,
+          alamat penagihan, dan preferensi ada di Pengaturan > Tagihan &
+          Pembayaran (components/settings/BillingPanel.js). */}
+      <div className="card card-pad mb-20">
+        <div className="row-between" style={{ gap: 16, flexWrap: "wrap" }}>
+          <p className="t-small muted" style={{ flex: "1 1 280px" }}>
+            Metode pembayaran, alamat penagihan, dan preferensi pembayaran dikelola di Pengaturan › Tagihan & Pembayaran.
+          </p>
+          <Link href="/settings?tab=pembayaran" className="btn btn-secondary btn-sm">Kelola di Pengaturan</Link>
+        </div>
+      </div>
+
+      <EarningsSectionMenu activeTab={tab} onSelectTab={selectTab} dataByTab={dataByTab} sections={SECTIONS} basePath="/payments" />
+
+      <h2 className="t-h3 mb-16">{meta.title}</h2>
+
+      <div className="project-toolbar mb-16">
+        <div className="project-search">
+          <Icon name="search" />
+          <input className="input" placeholder={meta.searchPlaceholder} value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+        <div className="row gap-8" style={{ flexWrap: "wrap" }}>
+          <button type="button" className={`chip-filter ${statusFilter === null ? "active" : ""}`} onClick={() => setStatusFilter(null)}>
+            Semua Status
+          </button>
+          {statusOptions.map((s) => (
+            <button key={s.id} type="button" className={`chip-filter ${statusFilter === s.id ? "active" : ""}`} onClick={() => setStatusFilter(s.id)}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="empty-state">
+          {tab === "tertahan" && items.length === 0 ? "Tidak ada dana yang sedang tertahan." : "Tidak ada data yang cocok."}
+        </div>
+      ) : (
+        <div className="job-feed-list">
+          {filtered.map((item) => (
+            <PaymentRow key={item.id} variant={tab} item={item} onClick={openItem} />
+          ))}
+        </div>
+      )}
+
+      <PaymentDetailDrawer payment={selectedPayment} open={!!selectedPayment} onClose={() => setSelectedPayment(null)} />
+      <PaymentInvoiceDrawer
+        invoice={selectedInvoice}
+        open={!!selectedInvoice}
+        onClose={() => setSelectedInvoice(null)}
+        onDownload={() => showToast("Unduhan faktur belum tersedia di prototipe ini.")}
+      />
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
       {toast && <div className="toast">{toast}</div>}
     </>
