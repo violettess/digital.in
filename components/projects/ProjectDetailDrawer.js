@@ -1,9 +1,6 @@
 "use client";
 
-<<<<<<< HEAD
 import { useCallback, useEffect, useState } from "react";
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import Icon from "@/components/Icon";
 import Drawer from "@/components/ui/Drawer";
 import ProjectFundList from "@/components/escrow/ProjectFundList";
@@ -11,7 +8,6 @@ import MilestoneManager from "@/components/projects/MilestoneManager";
 import { STATUS_META } from "@/lib/projects.mock";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import { useChat } from "@/context/ChatContext";
-<<<<<<< HEAD
 import { useProjects } from "@/context/ProjectsContext";
 import { projectsApi } from "@/lib/projects/api";
 import ContractPanel from "@/components/projects/ContractPanel";
@@ -130,16 +126,6 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
   const canRate = project?.fromApi && project?.contractId && (project?.status === "selesai" || project?.contractStatus === "COMPLETED");
   const canStartWork = !isClientView && project?.fromApi && project?.contractId && project?.contractStatus === "FUNDED" && !contractStarted;
 
-=======
-
-// `perspective="client"` (sudut pandang UMKM) nambahin daftar "Dana per
-// milestone" dan ubah label tombol pesan jadi ke freelancer, bukan klien.
-export default function ProjectDetailDrawer({ project, open, onClose, perspective = "freelancer" }) {
-  const { openWidget } = useChat();
-  const meta = project ? STATUS_META[project.status] : null;
-  const isClientView = perspective === "client";
-
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   return (
     <Drawer open={open} onClose={onClose} title={project?.title || "Detail Proyek"}>
       {project && (
@@ -148,15 +134,11 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
             <span className={`badge ${meta.badgeClass}`}>
               <Icon name={meta.icon} /> {meta.label}
             </span>
-<<<<<<< HEAD
             <span className="t-caption">
               {isClientView && project.freelancerName
                 ? `Freelancer: ${project.freelancerName}`
                 : `Klien: ${project.client}`}
             </span>
-=======
-            <span className="t-caption">Klien: {project.client}</span>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           </div>
 
           <div className="job-detail-stats mt-20">
@@ -184,7 +166,6 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
             <p className="t-body">{project.description}</p>
           </div>
 
-<<<<<<< HEAD
           {canStartWork && (
             <div className="card card-pad mt-16">
               <div className="t-small" style={{ fontWeight: 700 }}>Kontrak Sudah Didanai</div>
@@ -303,16 +284,6 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
             {isClientView && !project.freelancerName && applications.length === 0 ? (
               <p className="t-small muted" style={{ textAlign: "center" }}>
                 Belum ada freelancer di proyek ini. Pesan tersedia setelah ada pelamar atau freelancer yang mengerjakannya.
-=======
-          {isClientView && <MilestoneManager project={project} />}
-
-          {isClientView && <ProjectFundList project={project} />}
-
-          <div className="drawer-footer">
-            {isClientView && !project.freelancerName ? (
-              <p className="t-small muted" style={{ textAlign: "center" }}>
-                Belum ada freelancer di proyek ini. Pesan tersedia setelah ada freelancer yang mengerjakannya.
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
               </p>
             ) : (
               <button

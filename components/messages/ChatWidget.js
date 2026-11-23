@@ -18,13 +18,10 @@ import { unreadCount, formatLastSeen } from "@/lib/chat";
 // role yang datanya belum ada (Verify & Trust) otomatis disembunyikan lewat
 // itu, tanpa nulis if(role===...) di sini. Tetap disembunyikan di halaman
 // /messages sendiri, karena di situ chat-nya udah tampil penuh.
-<<<<<<< HEAD
 // Halaman publik/pra-login: chat adalah fitur akun, dan bubble-nya dulu
 // menutupi tombol CTA homepage di layar HP.
 const PUBLIC_ROUTES = ["/", "/login", "/register", "/choose-type", "/verify", "/verify/campus-email", "/verify-email", "/forgot-password"];
 
-=======
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 export default function ChatWidget() {
   const pathname = usePathname();
   const { config } = useRole();
@@ -95,11 +92,7 @@ export default function ChatWidget() {
     onPrev: () => goRelative(-1), onNext: () => goRelative(1),
   } : null;
 
-<<<<<<< HEAD
   const canShowWidget = !!config?.features?.chatWidget && pathname !== "/messages" && !PUBLIC_ROUTES.includes(pathname);
-=======
-  const canShowWidget = !!config?.features?.chatWidget && pathname !== "/messages";
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   if (!canShowWidget) return null;
 
   return (

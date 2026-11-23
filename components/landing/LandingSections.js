@@ -27,11 +27,7 @@ export function LandingHero() {
             </em>{" "}
             secara digital.
           </h1>
-<<<<<<< HEAD
           <p className="lp-lead">
-=======
-          <p className="lp-lead" style={{ maxWidth: 560 }}>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             Digital.in mempertemukan pemilik UMKM dengan mahasiswa berbakat untuk urusan konten, desain, website, sampai pembukuan. Hasil profesional, harga bersahabat.
           </p>
           <div className="lp-cta-row">
@@ -44,7 +40,6 @@ export function LandingHero() {
           </div>
         </div>
 
-<<<<<<< HEAD
         {/* Ilustrasi (kartu HTML, bukan gambar raster) — dibaca sebagai satu
             gambar oleh pembaca layar lewat role="img". */}
         <div
@@ -62,30 +57,12 @@ export function LandingHero() {
             <p className="lp-visual-meta">3 dari 4 tahap selesai</p>
           </div>
           <div className="lp-visual-list">
-=======
-        <div className="lp-visual lp-card">
-          <div className="lp-visual-top">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: "#DBEAFE" }}>Proyek berjalan</span>
-              <span className="lp-chip">Aktif</span>
-            </div>
-            <h3 style={{ margin: "12px 0 0", fontSize: 22, fontWeight: 800 }}>Konten Instagram — Kopi Anteng</h3>
-            <div className="lp-bar"><div /></div>
-            <p style={{ margin: "8px 0 0", fontSize: 14, color: "#DBEAFE" }}>3 dari 4 tahap selesai</p>
-          </div>
-          <div style={{ display: "grid", gap: 8, padding: 12 }}>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             <TalentRow name="Nadia Putri" role="DKV · Univ. Indonesia" rating="4,9" />
             <TalentRow name="Rangga Saputra" role="Informatika · ITB" rating="5,0" />
           </div>
           <div className="lp-float lp-card">
-<<<<<<< HEAD
             <p className="lp-float-label">Rata-rata selesai</p>
             <p className="lp-float-value">7 hari</p>
-=======
-            <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "var(--text-faint)" }}>Rata-rata selesai</p>
-            <p style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "var(--primary)" }}>7 hari</p>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           </div>
         </div>
       </div>
@@ -97,19 +74,11 @@ function TalentRow({ name, role, rating }) {
   return (
     <div className="lp-talent">
       <div className="lp-av">{initialsOf(name)}</div>
-<<<<<<< HEAD
       <div className="lp-talent-main">
         <p className="lp-talent-name">{name}</p>
         <p className="lp-talent-role">{role}</p>
       </div>
       <span className="lp-talent-rate">
-=======
-      <div style={{ minWidth: 0, flex: 1 }}>
-        <p style={{ margin: 0, fontSize: 14, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</p>
-        <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{role}</p>
-      </div>
-      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 14, fontWeight: 700 }}>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         <IconStar size={14} className="lp-star" /> {rating}
       </span>
     </div>
@@ -129,13 +98,8 @@ export function LandingStats() {
       <div className="lp-x lp-stats">
         {STATS.map((s) => (
           <div key={s.label}>
-<<<<<<< HEAD
             <p className="lp-stat-v">{s.value}</p>
             <p className="lp-stat-l">{s.label}</p>
-=======
-            <p className="lp-stat-v" style={{ margin: 0 }}>{s.value}</p>
-            <p style={{ margin: "4px 0 0", fontSize: 14, color: "var(--text-muted)" }}>{s.label}</p>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
           </div>
         ))}
       </div>
@@ -227,11 +191,7 @@ export function LandingCategories() {
             <span className="lp-eyebrow">Kategori jasa</span>
             <h2 className="lp-h2">Apa pun kebutuhan digital usahamu, ada talentanya.</h2>
           </div>
-<<<<<<< HEAD
           <Link href="/choose-type" className="lp-link">Mulai sekarang →</Link>
-=======
-          <Link href="/choose-type" style={{ fontSize: 14, fontWeight: 700, color: "var(--primary-dark)" }}>Mulai sekarang →</Link>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         </div>
         <div className="lp-grid c3">
           {CATEGORIES.map((c) => (
@@ -240,11 +200,7 @@ export function LandingCategories() {
               <div>
                 <h3>{c.title}</h3>
                 <p>{c.desc}</p>
-<<<<<<< HEAD
                 <span className="lp-from">Mulai {c.from}</span>
-=======
-                <p className="lp-from">Mulai {c.from}</p>
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
               </div>
             </Link>
           ))}
@@ -254,43 +210,6 @@ export function LandingCategories() {
   );
 }
 
-<<<<<<< HEAD
-=======
-const TESTIMONIALS = [
-  { quote: "Konten Instagram warung saya jadi rapi dan konsisten. Pesanan naik hampir dua kali lipat dalam sebulan.", name: "Ibu Sari", role: "Warung Ibu Sari, Yogyakarta" },
-  { quote: "Dapat proyek website pertama lewat Digital.in. Portofolio bertambah dan sekarang ada pemasukan tetap.", name: "Rangga Saputra", role: "Mahasiswa Informatika, ITB" },
-  { quote: "Pembukuan usaha akhirnya rapi. Waktu ajukan pinjaman modal, laporannya langsung diterima bank.", name: "Pak Budi", role: "Berkah Furniture, Jepara" },
-];
-
-export function LandingTestimonials() {
-  return (
-    <section className="lp-section lp-alt">
-      <div className="lp-x">
-        <div style={{ maxWidth: 672 }}>
-          <span className="lp-eyebrow">Cerita mereka</span>
-          <h2 className="lp-h2">Usaha tumbuh, mahasiswa berkembang.</h2>
-        </div>
-        <div className="lp-grid c3">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="lp-card lp-quote">
-              <div className="lp-stars">{[0, 1, 2, 3, 4].map((i) => <IconStar key={i} size={16} />)}</div>
-              <blockquote>“{t.quote}”</blockquote>
-              <figcaption>
-                <span className="lp-av">{initialsOf(t.name)}</span>
-                <div>
-                  <p style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>{t.name}</p>
-                  <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)" }}>{t.role}</p>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
->>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 export function LandingCtaBand() {
   return (
     <section className="lp-section">
