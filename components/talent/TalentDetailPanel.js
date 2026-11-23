@@ -108,19 +108,30 @@ function PanelBody({ t, query, saved, invited, onToggleSave, onInvite, showToast
         {t.available && <div className="ft-available t-caption" style={{ textAlign: "center", marginTop: 6 }}>⚡ Terbuka untuk kerja</div>}
 
         <div className="ftd-badges">
-          <span className="ft-success"><Icon name="award" /> {t.successRate}% Tingkat Keberhasilan</span>
+          {t.matchScore != null && <span className="badge badge-primary"><Icon name="trendingUp" /> Kecocokan {t.matchScore}%</span>}
+          {!t.fromApi && <span className="ft-success"><Icon name="award" /> {t.successRate}% Tingkat Keberhasilan</span>}
           {badge && <span className={`badge ${badge.className}`}><Icon name={badge.icon} /> {badge.label}</span>}
         </div>
         <div className="ftd-facts">
           <div><Stars n={t.rating} /> <b>{t.rating.toFixed(1)}</b> <span className="muted">({t.reviewCount} ulasan)</span></div>
-          <div className="row gap-6"><Icon name="mapPin" /> {t.city}{time && ` · ${time} ${t.timezone}`}</div>
-          <div className="row gap-6"><Icon name="clock" /> Rata-rata respons {t.responseTime}</div>
+          <div className="row gap-6"><Icon name="mapPin" /> {t.city}{!t.fromApi && time && ` · ${time} ${t.timezone}`}</div>
+          {!t.fromApi && <div className="row gap-6"><Icon name="clock" /> Rata-rata respons {t.responseTime}</div>}
         </div>
 
         <div className="ftd-stats">
-          <div><b>{formatRupiahShort(t.earnings)}+</b><span>Total Penghasilan</span></div>
-          <div><b>{t.totalProjects}</b><span>Total Proyek</span></div>
-          <div><b>{t.totalHours}</b><span>Total Jam Kerja</span></div>
+          {t.fromApi ? (
+            <>
+              <div><b>{t.totalProjects}</b><span>Proyek Selesai</span></div>
+              <div><b>{t.portfolio.length}</b><span>Portofolio</span></div>
+              <div><b>{t.skills.length}</b><span>Skill</span></div>
+            </>
+          ) : (
+            <>
+              <div><b>{formatRupiahShort(t.earnings)}+</b><span>Total Penghasilan</span></div>
+              <div><b>{t.totalProjects}</b><span>Total Proyek</span></div>
+              <div><b>{t.totalHours}</b><span>Total Jam Kerja</span></div>
+            </>
+          )}
         </div>
 
         <div className="ftd-actions">

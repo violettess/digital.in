@@ -81,11 +81,14 @@ Route::prefix('v1')->group(function () {
             Route::post('/applications/{application}/accept', [ApplicationController::class, 'accept']);
             Route::post('/applications/{application}/reject', [ApplicationController::class, 'reject']);
             Route::post('/contracts/{contract}/payments', [PaymentController::class, 'store']);
+            // Simulasi bayar selama belum ada gateway asli (404 bila bukan driver MOCK / production).
+            Route::post('/payments/{payment}/mock-complete', [PaymentController::class, 'mockComplete']);
             Route::post('/projects/{project}/premium', [ProjectController::class, 'premium']);
         });
 
         Route::middleware('role:STUDENT')->group(function () {
             Route::post('/projects/{project}/applications', [ApplicationController::class, 'store']);
+            Route::get('/invitations', [InvitationController::class, 'mine']);
             Route::post('/invitations/{invitation}/accept', [InvitationController::class, 'accept']);
             Route::post('/invitations/{invitation}/decline', [InvitationController::class, 'decline']);
             Route::post('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw']);

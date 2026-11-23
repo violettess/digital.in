@@ -19,6 +19,9 @@ export default function JobDetailDrawer({ project, open, onClose }) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
   const [sent, setSent] = useState(false);
+  const suggested = project?.suggestedMilestones || [];
+  const suggestedTotal = suggested.reduce((s, m) => s + m.amount, 0);
+  const [useSuggested, setUseSuggested] = useState(false);
 
   useEffect(() => {
     if (!open || !project) return;
@@ -31,7 +34,11 @@ export default function JobDetailDrawer({ project, open, onClose }) {
   useEffect(() => {
     setFormOpen(false);
     setProposal("");
-    setPrice(String(project?.budgetValue || ""));
+    const hasSuggestion = (project?.suggestedMilestones || []).length > 0;
+    setUseSuggested(hasSuggestion);
+    setPrice(String(hasSuggestion
+      ? project.suggestedMilestones.reduce((s, m) => s + m.amount, 0)
+      : project?.budgetValue || ""));
     setDays("7");
     setError(null);
     setSent(false);
@@ -42,6 +49,9 @@ export default function JobDetailDrawer({ project, open, onClose }) {
     setError(null);
     if (!proposal.trim()) return setError("Tulis proposal singkat dulu.");
     if (!(Number(price) > 0)) return setError("Harga penawaran harus lebih dari 0.");
+    if (useSuggested && Number(price) !== suggestedTotal) {
+      return setError("Saat memakai milestone saran UMKM, harga penawaran harus sama dengan total milestone.");
+    }
     if (!(Number(days) > 0)) return setError("Estimasi hari harus lebih dari 0.");
     setSending(true);
     const res = await projectsApi.apply({
@@ -50,6 +60,7 @@ export default function JobDetailDrawer({ project, open, onClose }) {
       price: Number(price),
       days: Number(days),
       dueDate: project.deadlineIso,
+      milestones: useSuggested ? suggested : undefined,
     });
     setSending(false);
     if (!res.ok) return setError(res.error.message);
@@ -99,6 +110,24 @@ export default function JobDetailDrawer({ project, open, onClose }) {
             </div>
           )}
 
+          {suggested.length > 0 && (
+            <div className="mt-20">
+              <div className="t-caption mb-8">MILESTONE SARAN UMKM</div>
+              <div className="pp-review-list">
+                {suggested.map((m, i) => (
+                  <div key={m.id} className="row-between">
+                    <span className="t-small">{i + 1}. {m.name}{m.deadline && <span className="muted"> · {m.deadline}</span>}</span>
+                    <span className="t-small" style={{ fontWeight: 700 }}>Rp{m.amount.toLocaleString("id-ID")}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="row-between mt-8">
+                <span className="t-small muted">Total</span>
+                <b className="t-small">Rp{suggestedTotal.toLocaleString("id-ID")}</b>
+              </div>
+            </div>
+          )}
+
           <div className="drawer-footer">
             {!project.fromApi ? (
               <button className="btn btn-primary btn-block btn-lg" onClick={() => alert("Fitur ajukan proposal tersedia di mode terhubung backend")}>
@@ -122,6 +151,18 @@ export default function JobDetailDrawer({ project, open, onClose }) {
                     <input id="ap-days" className="input" type="number" min="1" value={days} onChange={(e) => setDays(e.target.value)} />
                   </div>
                 </div>
+                {suggested.length > 0 && (
+                  <label className="row gap-8 t-small" style={{ marginBottom: 10, cursor: "pointer" }}>
+                    <input
+                      type="checkbox" checked={useSuggested}
+                      onChange={(e) => {
+                        setUseSuggested(e.target.checked);
+                        if (e.target.checked) setPrice(String(suggestedTotal));
+                      }}
+                    />
+                    Pakai milestone saran UMKM ({suggested.length} milestone)
+                  </label>
+                )}
                 {error && <div className="pp-error" role="alert" style={{ marginBottom: 8 }}>{error}</div>}
                 <div className="row gap-8">
                   <button type="button" className="btn btn-secondary" onClick={() => setFormOpen(false)} disabled={sending}>Batal</button>

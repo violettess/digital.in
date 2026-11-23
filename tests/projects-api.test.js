@@ -102,6 +102,30 @@ describe("projectsApi lamaran, kontrak & rating", () => {
     expect(post).toHaveBeenCalledWith("/contracts/c-1/ratings", { target: "STUDENT", score: 5, comment: "Bagus" });
     expect(res.ok).toBe(true);
   });
+
+  it("mengirim pembayaran escrow, submission, review, sengketa, pembatalan, dan undangan", async () => {
+    post.mockResolvedValue({ data: { data: { id: "ok" } } });
+
+    await projectsApi.pay("c-1", "VA");
+    await projectsApi.submitWork("m-1", { notes: "Selesai", files: [new Blob(["x"], { type: "text/plain" })] });
+    await projectsApi.clientReview("s-1", { decision: "APPROVED", feedback: null });
+    await projectsApi.dispute("m-1", "Tidak sesuai");
+    await projectsApi.requestCancellation("c-1", { reason: "Berubah", reopenProject: true });
+    await projectsApi.respondCancellation("cl-1", "Setuju");
+    await projectsApi.withdrawCancellation("cl-1");
+    await projectsApi.acceptInvitation("i-1");
+    await projectsApi.declineInvitation("i-2");
+
+    expect(post).toHaveBeenCalledWith("/contracts/c-1/payments", { method: "VA" });
+    expect(post).toHaveBeenCalledWith("/milestones/m-1/submissions", expect.any(FormData), { timeout: 120000 });
+    expect(post).toHaveBeenCalledWith("/submissions/s-1/client-review", { decision: "APPROVED", feedback: null });
+    expect(post).toHaveBeenCalledWith("/milestones/m-1/disputes", { reason: "Tidak sesuai" });
+    expect(post).toHaveBeenCalledWith("/contracts/c-1/cancellations", { reason: "Berubah", reopen_project: true });
+    expect(post).toHaveBeenCalledWith("/cancellations/cl-1/responses", { response: "Setuju" });
+    expect(post).toHaveBeenCalledWith("/cancellations/cl-1/withdraw");
+    expect(post).toHaveBeenCalledWith("/invitations/i-1/accept");
+    expect(post).toHaveBeenCalledWith("/invitations/i-2/decline");
+  });
 });
 
 describe("walletApi, chatApi & notificationsApi", () => {

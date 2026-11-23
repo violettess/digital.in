@@ -95,6 +95,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
       description: raw.description,
       budget: raw.budget,
       deadline: raw.deadline,
+      milestones: raw.milestones,
     });
     setSaving(false);
     if (!res.ok) {

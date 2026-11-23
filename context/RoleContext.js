@@ -129,7 +129,10 @@ export function RoleProvider({ children }) {
     if (sessionUser && statusRef.current === "authenticated") setAuthUserState(sessionUser);
   }, []);
 
-  const user = role ? CURRENT_USERS[role] : null;
+  // Role tanpa data mock (mis. mentor) memakai ringkasan dari sesi asli.
+  const user = role
+    ? CURRENT_USERS[role] || { name: authUser?.name || "", plan: ROLES[role]?.label || "", avatarBg: "#E6E1F5", contact: { email: authUser?.email || "" } }
+    : null;
   const config = role ? ROLES[role] : null;
 
   return (

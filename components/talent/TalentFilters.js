@@ -50,12 +50,15 @@ export default function TalentFilters({ filters, set, options, rateBounds, onRes
         ))}
       </Group>
 
-      <Group title="Tarif per Jam">
-        <RateHistogram
-          rates={options.rates} min={rateBounds[0]} max={rateBounds[1]}
-          value={filters.rate} onChange={(rate) => set({ rate })}
-        />
-      </Group>
+      {/* Tarif per jam belum ada di profil backend; grup ini hanya tampil bila data tarif tersedia. */}
+      {options.rates.length > 0 && rateBounds[1] > rateBounds[0] && (
+        <Group title="Tarif per Jam">
+          <RateHistogram
+            rates={options.rates} min={rateBounds[0]} max={rateBounds[1]}
+            value={filters.rate} onChange={(rate) => set({ rate })}
+          />
+        </Group>
+      )}
 
       <Group title="Skill">
         {skills.map((s) => (

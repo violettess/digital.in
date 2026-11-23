@@ -121,12 +121,20 @@ final class ContractController extends Controller
             throw new AuthorizationException('You are not allowed to view this contract.');
         }
 
+        // UMKM hanya melihat submission yang sudah lolos mentor (sama dengan aturan unduh berkas).
+        $submissions = fn ($query) => $query
+            ->when($user->role === 'UMKM', fn ($q) => $q->whereIn('status', ['PENDING_CLIENT', 'REVISION_REQUESTED', 'ACCEPTED']))
+            ->orderBy('version_no')
+            ->with(['files:id,submission_id,file_name,mime_type,size_bytes', 'reviews:id,submission_id,reviewer_role,decision,feedback,reviewed_at']);
+
         return ApiResponse::success($contract->load([
             'project:id,title,category_id,city,deadline',
             'umkm:id,name',
             'student:id,name',
-            'milestones',
+            'milestones' => fn ($query) => $query->orderBy('sequence'),
+            'milestones.submissions' => $submissions,
             'escrow:id,contract_id,status,funded_amount,released_amount,refunded_amount,held_amount',
+            'cancellationRequests:id,contract_id,requested_by,requester_role,type,reason,counterparty_response,status,response_due_at,resolved_at',
         ]));
     }
 

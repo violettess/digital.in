@@ -21,6 +21,7 @@ class Project extends Model
         'budget_max',
         'deadline',
         'city',
+        'suggested_milestones',
         'status',
         'published_at',
         'closed_at',
@@ -30,6 +31,7 @@ class Project extends Model
     {
         return [
             'deadline' => 'date',
+            'suggested_milestones' => 'array',
             'published_at' => 'datetime',
             'closed_at' => 'datetime',
             'budget_min' => 'integer',

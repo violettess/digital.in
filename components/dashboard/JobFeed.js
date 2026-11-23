@@ -38,8 +38,9 @@ export default function JobFeed({ activeTab, query = "" }) {
   // ditampilkan" tetap akurat terhadap jumlah yang benar-benar cocok.
   const pool = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return PROJECTS;
-    return PROJECTS.filter((p) => {
+    const base = USE_MOCK ? PROJECTS : (source || []);
+    if (!q) return base;
+    return base.filter((p) => {
       const haystack = [p.title, p.umkm, p.category, ...(p.skills || [])].join(" ").toLowerCase();
       return haystack.includes(q);
     });

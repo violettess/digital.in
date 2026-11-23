@@ -10,6 +10,7 @@ import { formatRupiah, formatTanggal } from "@/lib/format";
 import { useChat } from "@/context/ChatContext";
 import { useProjects } from "@/context/ProjectsContext";
 import { projectsApi } from "@/lib/projects/api";
+import ContractPanel from "@/components/projects/ContractPanel";
 
 export default function ProjectDetailDrawer({ project, open, onClose, perspective = "freelancer", onUpdated }) {
   const { openWidget } = useChat();
@@ -174,6 +175,14 @@ export default function ProjectDetailDrawer({ project, open, onClose, perspectiv
                 {starting ? "Memproses..." : "Mulai Kerja"}
               </button>
             </div>
+          )}
+
+          {project.fromApi && project.contractId && (
+            <ContractPanel
+              contractId={project.contractId}
+              perspective={isClientView ? "client" : "student"}
+              onChanged={onUpdated}
+            />
           )}
 
           {isClientView && project.fromApi && (

@@ -23,7 +23,7 @@ export default function TalentResultCard({ talent: t, saved, invited, onToggleSa
       onKeyDown={(e) => { if (e.key === "Enter") onOpen(t.id); }}
       aria-label={`Lihat detail ${t.name}`}
     >
-      <TalentThumb color={t.avatarBg} item={t.portfolio[0]} />
+      <TalentThumb color={t.avatarBg} item={t.portfolio[0] || { icon: "user", title: t.category !== "-" ? t.category : "Belum ada portofolio" }} />
 
       <div className="ft-card-main">
         <div className="ft-card-top">
@@ -35,7 +35,7 @@ export default function TalentResultCard({ talent: t, saved, invited, onToggleSa
             <div style={{ minWidth: 0 }}>
               <div className="row gap-8" style={{ flexWrap: "wrap" }}>
                 <span className="t-small" style={{ fontWeight: 600 }}>{t.name}</span>
-                {t.boosted && <span className="ft-boosted">⚡ Dipromosikan</span>}
+                {t.boosted && !t.fromApi && <span className="ft-boosted">⚡ Dipromosikan</span>}
               </div>
               <div className="ft-card-title">{t.title}</div>
               <div className="t-caption">{t.uni} · {t.city}</div>
@@ -64,9 +64,19 @@ export default function TalentResultCard({ talent: t, saved, invited, onToggleSa
         </div>
 
         <div className="ft-meta">
-          <span className="t-small" style={{ fontWeight: 700 }}>{formatRupiah(t.rate)}/jam</span>
-          <span className="ft-success"><Icon name="award" /> {t.successRate}% Tingkat Keberhasilan</span>
-          <span>{formatRupiahShort(t.earnings)}+ diperoleh</span>
+          {t.matchScore != null && <span className="badge badge-primary"><Icon name="trendingUp" /> Kecocokan {t.matchScore}%</span>}
+          {t.fromApi ? (
+            <>
+              <span>★ {t.rating ? t.rating.toFixed(1) : "Belum ada rating"}</span>
+              <span>{t.totalProjects} proyek selesai</span>
+            </>
+          ) : (
+            <>
+              <span className="t-small" style={{ fontWeight: 700 }}>{formatRupiah(t.rate)}/jam</span>
+              <span className="ft-success"><Icon name="award" /> {t.successRate}% Tingkat Keberhasilan</span>
+              <span>{formatRupiahShort(t.earnings)}+ diperoleh</span>
+            </>
+          )}
           {t.available && <span className="ft-available">● Terbuka untuk kerja</span>}
           {badge && <span className={`badge ${badge.className}`}><Icon name={badge.icon} /> {badge.label}</span>}
         </div>

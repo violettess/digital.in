@@ -101,6 +101,18 @@ class ProjectPhaseTest extends TestCase
         $this->as($this->umkm)->putJson("/api/v1/projects/{$project->id}", ['title' => 'x'])->assertStatus(409);
     }
 
+    public function test_project_with_deadline_today_can_be_published(): void
+    {
+        $project = $this->makeProject([
+            'status' => 'DRAFT',
+            'deadline' => now()->toDateString(),
+        ]);
+
+        $this->as($this->umkm)->postJson("/api/v1/projects/{$project->id}/publish")
+            ->assertOk()
+            ->assertJsonPath('data.status', 'OPEN');
+    }
+
     public function test_invalid_project_transitions_are_rejected_with_409(): void
     {
         $project = $this->makeProject(['status' => 'CANCELLED']);
@@ -371,6 +383,68 @@ class ProjectPhaseTest extends TestCase
             ->assertJsonPath('data.status', 'IN_PROGRESS')
             ->assertJsonPath('data.milestones.0.status', 'IN_PROGRESS')
             ->assertJsonPath('data.milestones.1.status', 'LOCKED');
+    }
+
+    public function test_mock_complete_funds_contract_for_payer_only(): void
+    {
+        $project = $this->makeProject();
+        $applicationId = $this->apply($project)->json('data.id');
+        $contractId = $this->as($this->umkm)->postJson("/api/v1/applications/{$applicationId}/accept")->json('data.contract.id');
+        $paymentId = $this->as($this->umkm)->postJson("/api/v1/contracts/{$contractId}/payments", ['method' => 'QRIS'])
+            ->assertCreated()->json('data.id');
+
+        $this->as($this->otherUmkm())->postJson("/api/v1/payments/{$paymentId}/mock-complete")->assertStatus(403);
+        $this->as($this->student)->postJson("/api/v1/payments/{$paymentId}/mock-complete")->assertStatus(403);
+
+        $this->as($this->umkm)->postJson("/api/v1/payments/{$paymentId}/mock-complete")
+            ->assertOk()->assertJsonPath('data.status', 'PAID');
+        $this->assertSame('FUNDED', Contract::query()->find($contractId)->status);
+
+        // Sudah dibayar -> tidak bisa diulang.
+        $this->as($this->umkm)->postJson("/api/v1/payments/{$paymentId}/mock-complete")->assertStatus(409);
+    }
+
+    public function test_mock_complete_is_hidden_in_production(): void
+    {
+        $project = $this->makeProject();
+        $applicationId = $this->apply($project)->json('data.id');
+        $contractId = $this->as($this->umkm)->postJson("/api/v1/applications/{$applicationId}/accept")->json('data.contract.id');
+        $paymentId = $this->as($this->umkm)->postJson("/api/v1/contracts/{$contractId}/payments", ['method' => 'VA'])->json('data.id');
+
+        $this->app['env'] = 'production';
+        $this->as($this->umkm)->postJson("/api/v1/payments/{$paymentId}/mock-complete")->assertNotFound();
+    }
+
+    public function test_student_lists_pending_invitations(): void
+    {
+        $project = $this->makeProject();
+        $this->as($this->umkm)->postJson("/api/v1/projects/{$project->id}/invitations", ['student_id' => $this->student->id])->assertCreated();
+
+        $this->as($this->student)->getJson('/api/v1/invitations')
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.project.title', $project->title)
+            ->assertJsonPath('data.0.project.umkm.name', $this->umkm->name);
+
+        $this->as($this->makeStudent())->getJson('/api/v1/invitations')->assertOk()->assertJsonCount(0, 'data');
+        $this->as($this->umkm)->getJson('/api/v1/invitations')->assertStatus(403);
+    }
+
+    public function test_contract_detail_includes_submissions_per_role(): void
+    {
+        $project = $this->makeProject();
+        $applicationId = $this->apply($project)->json('data.id');
+        $contract = Contract::query()->find(
+            $this->as($this->umkm)->postJson("/api/v1/applications/{$applicationId}/accept")->json('data.contract.id')
+        );
+        $milestone = $contract->milestones()->orderBy('sequence')->first();
+        $milestone->submissions()->create(['version_no' => 1, 'notes' => 'draft', 'status' => 'PENDING_MENTOR', 'submitted_at' => now()]);
+
+        $this->as($this->student)->getJson("/api/v1/contracts/{$contract->id}")
+            ->assertOk()->assertJsonCount(1, 'data.milestones.0.submissions');
+        // UMKM belum boleh melihat submission yang masih di mentor.
+        $this->as($this->umkm)->getJson("/api/v1/contracts/{$contract->id}")
+            ->assertOk()->assertJsonCount(0, 'data.milestones.0.submissions');
     }
 
     // ---------------------------------------------------------------- undangan

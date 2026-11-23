@@ -65,7 +65,7 @@ function EarningsPageInner() {
     ]);
     if (wRes.ok) {
       setApiWallet(wRes.data?.wallet || { balance: 0, pending_withdrawal: 0 });
-      setApiEntries((wRes.data?.entries || []).map(toTransactionRow));
+      setApiEntries((wRes.data?.entries || []).map(toTransactionRow).filter(Boolean));
     }
     if (wdRes.ok) setApiWithdrawals(wdRes.data || []);
     if (accRes.ok) setApiAccounts(accRes.data || []);

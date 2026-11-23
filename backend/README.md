@@ -10,6 +10,7 @@
 ## Digital.in Backend Setup
 
 Laravel modular-monolith API for the Digital.in UMKM and student platform. Business modules are placeholders; this setup currently includes shared API plumbing, PostgreSQL/Redis development services, and platform settings.
+The implementation also includes contract, payment/escrow, ledger, payout, review, cancellation, notification, and admin modules.
 
 ### Requirements
 
@@ -50,7 +51,7 @@ composer lint
 composer format
 ```
 
-Tests use SQLite in memory. PostgreSQL is used for local development through Docker Compose. Money-related logic and business state machines are not implemented in this setup.
+Tests use SQLite in memory. PostgreSQL is used for local development through Docker Compose. Money-related operations use integer Rupiah and double-entry ledger transactions. Payment and disbursement gateways use mock drivers outside production.
 
 ### Authentication note
 

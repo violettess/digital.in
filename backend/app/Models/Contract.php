@@ -79,6 +79,11 @@ class Contract extends Model
         return $this->hasOne(Escrow::class, 'contract_id');
     }
 
+    public function cancellationRequests(): HasMany
+    {
+        return $this->hasMany(CancellationRequest::class, 'contract_id')->latest();
+    }
+
     public static function activeCountForStudent(string $studentUserId): int
     {
         return self::query()

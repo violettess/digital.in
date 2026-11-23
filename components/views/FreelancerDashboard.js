@@ -1,12 +1,15 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import JobTabs from "@/components/dashboard/JobTabs";
 import JobFeed from "@/components/dashboard/JobFeed";
 import ProfileSidePanel from "@/components/dashboard/ProfileSidePanel";
 import Icon from "@/components/Icon";
 import { useSearchPanel } from "@/context/SearchPanelContext";
+import { projectsApi } from "@/lib/projects/api";
+import { USE_MOCK } from "@/lib/auth/api";
+import { formatRupiah, formatTanggal } from "@/lib/format";
 
 // Isi persis "Cari Proyek" yang sebelumnya ada di app/mahasiswa/dashboard —
 // cuma dipindah dari page.js ke sini (dipanggil lewat app/dashboard/page.js)
@@ -26,10 +29,75 @@ function FreelancerDashboardView() {
   const query = searchParams.get("q") || "";
   const [activeTab, setActiveTab] = useState("best");
   const { openSearch } = useSearchPanel();
+  const [invitations, setInvitations] = useState([]);
+  const [invitationBusy, setInvitationBusy] = useState(null);
+  const [invitationError, setInvitationError] = useState(null);
+
+  useEffect(() => {
+    if (USE_MOCK) return;
+    projectsApi.invitations().then((res) => {
+      if (res.ok) setInvitations(res.data || []);
+      else setInvitationError(res.error.message);
+    });
+  }, []);
+
+  async function respondInvitation(invitationId, accept) {
+    setInvitationBusy(invitationId);
+    setInvitationError(null);
+    const res = accept
+      ? await projectsApi.acceptInvitation(invitationId)
+      : await projectsApi.declineInvitation(invitationId);
+    setInvitationBusy(null);
+    if (!res.ok) return setInvitationError(res.error.message);
+    setInvitations((list) => list.filter((item) => item.id !== invitationId));
+  }
 
   return (
     <>
       <h1 className="t-h1 mb-16">Cari Proyek</h1>
+
+      {!USE_MOCK && invitations.length > 0 && (
+        <div className="card card-pad mb-16">
+          <div className="t-caption mb-8">UNDANGAN PROYEK</div>
+          {invitationError && <div className="pp-error mb-8" role="alert">{invitationError}</div>}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {invitations.map((invitation) => {
+              const project = invitation.project;
+              return (
+                <div key={invitation.id} className="row-between" style={{ gap: 12, flexWrap: "wrap" }}>
+                  <div>
+                    <div className="t-small" style={{ fontWeight: 700 }}>{project?.title || "Undangan proyek"}</div>
+                    <div className="t-caption muted mt-4">
+                      {project?.umkm?.name || "UMKM"}
+                      {project?.budget_max ? ` · ${formatRupiah(project.budget_max)}` : ""}
+                      {project?.deadline ? ` · Tenggat ${formatTanggal(project.deadline)}` : ""}
+                    </div>
+                    {invitation.message && <p className="t-small mt-6">{invitation.message}</p>}
+                  </div>
+                  <div className="row gap-8">
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      disabled={invitationBusy === invitation.id}
+                      onClick={() => respondInvitation(invitation.id, false)}
+                    >
+                      Tolak
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      disabled={invitationBusy === invitation.id}
+                      onClick={() => respondInvitation(invitation.id, true)}
+                    >
+                      {invitationBusy === invitation.id ? "Memproses..." : "Terima"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <button
         type="button"

@@ -40,7 +40,27 @@ export default function VerifyPage() {
 
   if (!signedIn || !role || role === "trust") return <SessionLoading />;
   if (role === "umkm") return <UmkmInfo />;
+  if (role === "mentor") return <MentorInfo />;
   return <StudentVerification />;
+}
+
+// Mentor tidak mengunggah dokumen di sini: akun mentor (PENDING_VERIFICATION saat daftar)
+// diaktifkan oleh tim Verify & Trust.
+function MentorInfo() {
+  const { authUser } = useRole();
+  const active = authUser?.status === "ACTIVE";
+  return (
+    <AuthShell aside={ASIDE}>
+      <span className="au-badge-icon"><IconCircleCheck size={22} /></span>
+      <h1 className="au-title">{active ? "Akun mentor aktif" : "Akun mentor sedang ditinjau"}</h1>
+      <p className="au-sub">
+        {active
+          ? "Kamu bisa mulai meninjau hasil kerja mahasiswa yang ditugaskan kepadamu."
+          : "Tim Verify & Trust sedang memeriksa data mentormu. Antrian review akan terbuka setelah akunmu diaktifkan."}
+      </p>
+      <Link href={ROLES.mentor.home} className="btn btn-primary btn-block btn-lg">Ke dashboard</Link>
+    </AuthShell>
+  );
 }
 
 function UmkmInfo() {

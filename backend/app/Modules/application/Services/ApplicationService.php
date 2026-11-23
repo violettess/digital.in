@@ -69,7 +69,9 @@ final class ApplicationService
 
             $milestones = $input['proposed_milestones'] ?? null;
             if (empty($milestones)) {
-                $milestones = $this->milestonesFromTemplate($project, (int) $input['offered_price'], (int) $input['estimated_days']);
+                // Prioritas usulan: milestone saran UMKM pada project, baru fallback ke template.
+                $milestones = $this->milestonesFromSuggestion($project)
+                    ?? $this->milestonesFromTemplate($project, (int) $input['offered_price'], (int) $input['estimated_days']);
             }
             $milestones = $this->validateMilestones($milestones, (int) $input['offered_price']);
 
@@ -262,6 +264,29 @@ final class ApplicationService
      *
      * @return list<array>
      */
+    /**
+     * Milestone saran UMKM pada project (projects.suggested_milestones), dipakai sebagai
+     * usulan default saat mahasiswa melamar tanpa mengirim proposed_milestones sendiri.
+     * Null jika UMKM tidak menyarankan apa pun. Nominal & urutan tanggal tetap divalidasi
+     * oleh validateMilestones (total harus sama dengan offered_price).
+     *
+     * @return list<array>|null
+     */
+    private function milestonesFromSuggestion(Project $project): ?array
+    {
+        $suggested = $project->suggested_milestones;
+        if (empty($suggested) || ! is_array($suggested)) {
+            return null;
+        }
+
+        return array_map(fn ($item) => [
+            'title' => $item['title'] ?? 'Milestone',
+            'description' => $item['description'] ?? null,
+            'amount' => (int) ($item['amount'] ?? 0),
+            'due_date' => $item['due_date'] ?? null,
+        ], array_values($suggested));
+    }
+
     private function milestonesFromTemplate(Project $project, int $offeredPrice, int $estimatedDays): array
     {
         $defaults = $project->template?->default_milestones ?? [];
