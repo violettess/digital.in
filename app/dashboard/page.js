@@ -4,6 +4,7 @@ import AppShell from "@/components/layout/AppShell";
 import FreelancerDashboard, { FreelancerDashboardAside } from "@/components/views/FreelancerDashboard";
 import UmkmDashboard from "@/components/views/UmkmDashboard";
 import TrustDashboard from "@/components/views/TrustDashboard";
+import MentorReviewView from "@/components/views/MentorReviewView";
 import { useRole } from "@/context/RoleContext";
 
 // Satu URL (/dashboard) buat ketiga role — kontennya dipilih di sini
@@ -24,6 +25,14 @@ export default function DashboardPage() {
     return (
       <AppShell>
         <TrustDashboard />
+      </AppShell>
+    );
+  }
+
+  if (role === "mentor") {
+    return (
+      <AppShell>
+        <MentorReviewView />
       </AppShell>
     );
   }

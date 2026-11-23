@@ -30,16 +30,22 @@ const ThemeContext = createContext(null);
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState("system"); // pilihan yang disimpan
   const [resolved, setResolved] = useState("light"); // "light" | "dark" yang benar-benar dipakai
+  // false sampai state di atas disamakan dengan pilihan tersimpan. Selama itu
+  // data-theme TIDAK disentuh — atribut dari inline script sudah benar, dan
+  // menimpanya dengan nilai awal "light" bikin kedip terang sesaat di mode gelap.
+  const [synced, setSynced] = useState(false);
 
   useEffect(() => {
     const stored = readStoredTheme();
     setThemeState(stored);
     setResolved(stored === "system" ? (systemPrefersDark() ? "dark" : "light") : stored);
+    setSynced(true);
   }, []);
 
   useEffect(() => {
+    if (!synced) return;
     document.documentElement.setAttribute("data-theme", resolved);
-  }, [resolved]);
+  }, [resolved, synced]);
 
   useEffect(() => {
     if (theme !== "system") return;

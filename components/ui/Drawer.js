@@ -1,7 +1,13 @@
 "use client";
 
+<<<<<<< HEAD
+import { useEffect, useRef, useState } from "react";
+import Icon from "@/components/Icon";
+import useFocusTrap from "./useFocusTrap";
+=======
 import { useEffect, useState } from "react";
 import Icon from "@/components/Icon";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
 const TRANSITION_MS = 320;
 
@@ -13,6 +19,12 @@ const TRANSITION_MS = 320;
 export default function Drawer({ open, onClose, title, children, width = 460, header }) {
   const [mounted, setMounted] = useState(open);
   const [animateIn, setAnimateIn] = useState(false);
+<<<<<<< HEAD
+  const panelRef = useRef(null);
+  // Fokus keyboard terkunci di dalam drawer selama terbuka (Tab berputar).
+  useFocusTrap(panelRef, mounted);
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   useEffect(() => {
     let raf;
@@ -52,6 +64,10 @@ export default function Drawer({ open, onClose, title, children, width = 460, he
         aria-hidden="true"
       />
       <div
+<<<<<<< HEAD
+        ref={panelRef}
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         className={`drawer-panel ${animateIn ? "open" : ""}`}
         style={{ width: `min(${width}px, 92vw)` }}
         role="dialog"

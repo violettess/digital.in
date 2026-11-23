@@ -1,5 +1,28 @@
 "use client";
 
+<<<<<<< HEAD
+import { useEffect, useState } from "react";
+import JobDetailDrawer from "@/components/dashboard/JobDetailDrawer";
+import { PROJECTS } from "@/lib/mock-data";
+import { USE_MOCK } from "@/lib/auth/api";
+import { projectsApi } from "@/lib/projects/api";
+
+const RECOMMENDED_IDS = ["p1", "p2", "p4", "p6"];
+
+export default function RecommendedJobs() {
+  const [selected, setSelected] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [jobs, setJobs] = useState(() => (USE_MOCK ? PROJECTS.filter((p) => RECOMMENDED_IDS.includes(p.id)) : []));
+
+  useEffect(() => {
+    if (USE_MOCK) return;
+    projectsApi.open().then((res) => {
+      if (res.ok) setJobs((res.data || []).slice(0, 4));
+    });
+  }, []);
+
+  if (jobs.length === 0) return null;
+=======
 import { useState } from "react";
 import JobDetailDrawer from "@/components/dashboard/JobDetailDrawer";
 import { PROJECTS } from "@/lib/mock-data";
@@ -15,6 +38,7 @@ export default function RecommendedJobs() {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
   const jobs = PROJECTS.filter((p) => RECOMMENDED_IDS.includes(p.id));
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   function openJob(job) {
     setSelected(job);

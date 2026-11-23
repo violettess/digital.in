@@ -23,7 +23,12 @@ const JOB_PREFS = ["Jangka pendek", "Jangka panjang", "Keduanya"];
 // (prototipe, belum ada backend) — nggak menyatu dengan perubahan yang
 // dibuat di /profile pada sesi yang sama.
 export default function ProfileSidePanel() {
+<<<<<<< HEAD
+  const { user, authUser } = useRole();
+  const displayName = authUser?.name || user.name;
+=======
   const { user } = useRole();
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   const [data, setData] = useState(FREELANCER_PROFILE);
   const [toast, setToast] = useState(null);
   const [prefOpen, setPrefOpen] = useState(false);
@@ -48,6 +53,18 @@ export default function ProfileSidePanel() {
   }
 
   return (
+<<<<<<< HEAD
+    // Lebar 300px di desktop, penuh saat turun ke bawah konten (< lg) —
+    // lihat .fp-side-panel di globals.css bagian 41.
+    <aside className="fp-side-panel">
+      <div className="card card-pad">
+        <div className="row gap-12">
+          <div className="avatar avatar-lg" style={{ background: user.avatarBg || "var(--primary-light)" }}>
+            {initials(displayName)}
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div className="t-h3">{displayName}</div>
+=======
     <aside style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16 }}>
       <div className="card card-pad">
         <div className="row gap-12">
@@ -56,6 +73,7 @@ export default function ProfileSidePanel() {
           </div>
           <div style={{ minWidth: 0 }}>
             <div className="t-h3">{user.name}</div>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             <div className="t-small muted">{user.plan}</div>
           </div>
         </div>
@@ -71,7 +89,11 @@ export default function ProfileSidePanel() {
         </div>
 
         {pct < 100 ? (
+<<<<<<< HEAD
+          <Link href={`/profile?focus=${firstMissing}`} className="mt-12 fp-complete-link" style={{ display: "block" }}>
+=======
           <Link href={`/profile?focus=${firstMissing}`} className="mt-12" style={{ display: "block" }}>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             <div className="row-between t-caption mb-4"><span>Lengkapi profil</span><span>{pct}%</span></div>
             <div className="progress-track"><div className="progress-fill" style={{ width: `${pct}%` }} /></div>
           </Link>

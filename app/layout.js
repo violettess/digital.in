@@ -13,6 +13,20 @@ export const metadata = {
   title: "Digital.in — Digitalisasi UMKM bersama Talenta Mahasiswa",
 };
 
+// <meta name="viewport">: lebar mengikuti perangkat, TANPA mengunci zoom
+// (tidak ada maximumScale/userScalable), dan viewport-fit=cover supaya
+// padding env(safe-area-inset-*) aktif di iPhone ber-notch. theme-color
+// mewarnai address bar browser mobile sesuai tema (nilai = --bg di globals.css).
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F6F9FC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0E0E0E" },
+  ],
+};
+
 // Dijalankan inline di <head>, SEBELUM React hydrate — memasang data-theme
 // di elemen <html> sebelum paint pertama, supaya tidak ada kedip terang
 // sekilas saat pengguna sudah memilih tema gelap (lihat context/ThemeContext.js,

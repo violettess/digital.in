@@ -1,24 +1,15 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { CONVERSATIONS } from "@/lib/messages.mock";
 import { CURRENT_USERS } from "@/lib/users.mock";
 import { MOCK_TODAY, getAllProjects } from "@/lib/projects.mock";
 import { sortByLatest, unreadCount, buildUmkmConversations } from "@/lib/chat";
 import { useRole } from "@/context/RoleContext";
 import { useClientProjects } from "@/context/ProjectsContext";
+import { USE_MOCK } from "@/lib/auth/api";
+import { chatApi } from "@/lib/chat/api";
 
-// State percakapan dipindah ke sini dari app/messages/page.js supaya bisa
-// dipakai bareng oleh halaman Pesan (penuh) DAN bubble chat melayang
-// (components/messages/ChatWidget.js) — badge belum dibaca dan isi chat
-// selalu sama di keduanya, karena sumbernya satu.
-//
-// Percakapan disimpan PER ROLE: Freelancer melihat percakapan dengan
-// klien-kliennya (sudut pandang Nadia), UMKM melihat percakapan dengan
-// freelancer di proyek-proyek miliknya (diturunkan dari relasi proyek,
-// lib/chat.js -> buildUmkmConversations). Dulu semua role memakai daftar
-// Nadia, jadi UMKM melihat chat milik klien lain. Verify & Trust tidak
-// punya chat (config.features.chatWidget).
 const ChatContext = createContext(null);
 
 function cloneConversations() {
@@ -26,22 +17,18 @@ function cloneConversations() {
 }
 
 export function ChatProvider({ children }) {
-  const { role, user } = useRole();
+  const { role, status, user, authUser } = useRole();
   const chatKey = role === "umkm" ? "umkm" : role === "mahasiswa" ? "mahasiswa" : null;
 
   const [store, setStore] = useState(() => ({
-    mahasiswa: cloneConversations(),
-    umkm: buildUmkmConversations(CURRENT_USERS.umkm.name),
+    mahasiswa: USE_MOCK ? cloneConversations() : [],
+    umkm: USE_MOCK ? buildUmkmConversations(CURRENT_USERS.umkm.name) : [],
   }));
-  // Percakapan yang sedang dibuka per role. Kalau belum ada pilihan eksplisit,
-  // default ke percakapan terbaru (lihat `activeId` di bawah).
   const [activeByRole, setActiveByRole] = useState({});
   const [widgetOpen, setWidgetOpen] = useState(false);
-  // Dibaca ChatWidget.js buat nentuin panel dibuka ke daftar percakapan
-  // ("list", klik bubble polos) atau langsung ke jendela chat ("chat",
-  // klik "Pesan klien/freelancer" yang sudah nunjuk ke satu proyek).
   const [openIntent, setOpenIntent] = useState("list");
   const readTimers = useRef([]);
+  const loadedMsgConvs = useRef(new Set());
 
   useEffect(() => () => readTimers.current.forEach(clearTimeout), []);
 
@@ -56,9 +43,54 @@ export function ChatProvider({ children }) {
     setStore((s) => ({ ...s, [chatKey]: updater(s[chatKey]) }));
   }
 
+  // Muat daftar percakapan asli dari GET /conversations.
+  const loadConversations = useCallback(async () => {
+    if (USE_MOCK || status !== "authenticated" || !chatKey || !authUser?.id) return;
+    const res = await chatApi.conversations(authUser.id, chatKey);
+    if (!res.ok) return;
+    setStore((s) => {
+      const existingById = new Map((s[chatKey] || []).map((c) => [c.id, c]));
+      const next = res.data.map((c) => {
+        const prev = existingById.get(c.id);
+        return prev?.messages?.length ? { ...c, messages: prev.messages } : c;
+      });
+      return { ...s, [chatKey]: next };
+    });
+  }, [status, chatKey, authUser?.id]);
+
+  useEffect(() => {
+    loadedMsgConvs.current.clear();
+    loadConversations();
+  }, [loadConversations]);
+
+  // Muat pesan percakapan yang sedang aktif dari GET /conversations/{id}/messages.
+  const loadMessages = useCallback(async (convId) => {
+    if (USE_MOCK || !convId || !chatKey || !authUser?.id) return;
+    const res = await chatApi.messages(convId, authUser.id);
+    if (!res.ok) return;
+    setStore((s) => ({
+      ...s,
+      [chatKey]: (s[chatKey] || []).map((c) => (
+        c.id === convId ? { ...c, messages: res.data, unreadOverride: 0 } : c
+      )),
+    }));
+  }, [chatKey, authUser?.id]);
+
+  useEffect(() => {
+    if (USE_MOCK || !activeId) return;
+    if (!loadedMsgConvs.current.has(activeId)) {
+      loadedMsgConvs.current.add(activeId);
+      loadMessages(activeId);
+    }
+  }, [activeId, loadMessages]);
+
   function selectConversation(id) {
     if (!chatKey) return;
     setActiveByRole((a) => ({ ...a, [chatKey]: id }));
+    if (!USE_MOCK) {
+      loadMessages(id);
+      return;
+    }
     updateConvs((prev) => prev.map((c) => (
       c.id === id
         ? { ...c, messages: c.messages.map((m) => (m.from === "them" ? { ...m, read: true } : m)) }
@@ -66,8 +98,6 @@ export function ChatProvider({ children }) {
     )));
   }
 
-  // Geser ke percakapan sebelumnya/berikutnya (dipakai swipe & panah ‹ › —
-  // lihat components/messages/ChatWindow.js), muter balik ke awal/akhir.
   function goRelative(delta) {
     if (sorted.length === 0) return;
     const idx = activeIndex < 0 ? 0 : activeIndex;
@@ -75,9 +105,22 @@ export function ChatProvider({ children }) {
     selectConversation(sorted[nextIdx].id);
   }
 
-  function sendMessage(text) {
+  async function sendMessage(text) {
     if (!activeId) return;
     const targetId = activeId;
+
+    if (!USE_MOCK) {
+      if (!authUser?.id) return;
+      const res = await chatApi.send(targetId, text, authUser.id);
+      if (!res.ok) return;
+      updateConvs((prev) => prev.map((c) => (
+        c.id === targetId
+          ? { ...c, updatedAt: res.data.at, messages: [...c.messages, res.data] }
+          : c
+      )));
+      return;
+    }
+
     const now = new Date();
     const at = `${MOCK_TODAY}T${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
     const id = `${targetId}-new-${Date.now()}`;
@@ -88,7 +131,6 @@ export function ChatProvider({ children }) {
         : c
     )));
 
-    // Simulasi "dibaca" ala aplikasi chat — nggak ada backend beneran.
     const t = setTimeout(() => {
       updateConvs((prev) => prev.map((c) => (
         c.id === targetId
@@ -99,9 +141,8 @@ export function ChatProvider({ children }) {
     readTimers.current.push(t);
   }
 
-  // Buka panel melayang, opsional langsung ke percakapan proyek tertentu
-  // (dipanggil dari tombol "Pesan klien/freelancer" di kartu & drawer proyek).
   function openWidget(projectId) {
+    if (!USE_MOCK) loadConversations();
     if (projectId) {
       const match = convs.find((c) => c.projectId === projectId);
       if (match) selectConversation(match.id);
@@ -118,21 +159,24 @@ export function ChatProvider({ children }) {
 
   const unreadTotal = useMemo(() => convs.reduce((sum, c) => sum + unreadCount(c), 0), [convs]);
 
-  // Proyek yang terhubung ke percakapan, sesuai role: UMKM -> proyek miliknya
-  // (termasuk yang baru diposting), Freelancer -> "Proyek Saya". Dipakai
-  // halaman Pesan & ChatWidget untuk judul proyek, status, dan drawer.
   const clientProjects = useClientProjects(user?.name ?? "");
   const projectById = useMemo(() => {
-    const list = role === "umkm" ? clientProjects : getAllProjects();
-    return Object.fromEntries(list.map((p) => [p.id, p]));
-  }, [role, clientProjects]);
+    const list = role === "umkm" ? clientProjects : (USE_MOCK ? getAllProjects() : []);
+    const map = Object.fromEntries(list.map((p) => [p.id, p]));
+    convs.forEach((c) => {
+      if (c.projectId && !map[c.projectId]) {
+        map[c.projectId] = { id: c.projectId, title: c.projectTitle || "Proyek", status: "berjalan", client: c.contact?.name || "" };
+      }
+    });
+    return map;
+  }, [role, clientProjects, convs]);
   const perspective = role === "umkm" ? "client" : "freelancer";
 
   const value = {
     convs, sorted, activeId, activeIndex,
     selectConversation, goRelative, sendMessage,
     unreadTotal, openWidget, closeWidget, widgetOpen, openIntent,
-    projectById, perspective,
+    projectById, perspective, reloadChat: loadConversations,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

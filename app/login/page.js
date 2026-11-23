@@ -1,73 +1,230 @@
 "use client";
 
-import { useState } from "react";
+import "../auth.css";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useRole } from "@/context/RoleContext";
-import { ROLES } from "@/config/roles";
-import { CURRENT_USERS } from "@/lib/users.mock";
+import { ROLES, canAccess } from "@/config/roles";
+import AuthShell from "@/components/auth/AuthShell";
+import useGuestOnly from "@/components/auth/useGuestOnly";
+import SessionLoading from "@/components/layout/SessionLoading";
+import PasswordInput from "@/components/auth/PasswordInput";
+import { FieldError, FormAlert, SubmitButton, useCountdown } from "@/components/auth/AuthParts";
+import { validateLogin, channelOf, normalizeIdentifier } from "@/lib/auth/validation";
+import { login, formatCountdown, demoAccounts, USE_MOCK, ROLE_FROM_BACKEND } from "@/lib/auth/api";
 
-// Sandi dummy yang sama untuk ketiga akun contoh (login belum divalidasi —
-// prototipe; field boleh diisi apa saja).
-const DEMO_PASSWORD = "digitalin123";
-const ROLE_OPTIONS = ["umkm", "mahasiswa", "trust"];
+// "Ingat saya" hanya menyimpan email/nomor — TIDAK PERNAH password.
+const REMEMBER_KEY = "digitalin.rememberLogin";
+
+const ASIDE = {
+  title: "Selamat datang kembali.",
+  text: "Lanjutkan proyek, pantau milestone, dan kelola pembayaranmu dari satu tempat.",
+  points: [
+    "Dana proyek ditahan aman di escrow sampai milestone disetujui",
+    "Setiap UMKM dan mahasiswa melewati verifikasi identitas",
+    "Progres dan riwayat proyek tercatat transparan",
+  ],
+};
+
+// Pesan dari ?reason= (diarahkan ke sini oleh RoleContext / halaman lupa password).
+const REASONS = {
+  expired: { tone: "info", title: "Sesi berakhir", text: "Silakan masuk lagi untuk melanjutkan." },
+  suspended: { tone: "error", title: "Akun ini sedang ditangguhkan", text: "Hubungi tim Digital.in untuk informasi lebih lanjut." },
+  reset: { tone: "success", title: "Password berhasil diubah", text: "Masuk dengan password barumu. Semua sesi lama sudah dikeluarkan." },
+};
+
+// ?next= dari halaman yang dijaga (useRequireAuth). Hanya path internal yang
+// boleh diakses peran ini yang dipakai — mencegah open redirect.
+function safeNext(next, appRole) {
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\")) return null;
+  return canAccess(appRole, next) ? next : null;
+}
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setRole } = useRole();
-  // Default UMKM = perilaku login sebelumnya.
-  const [selected, setSelected] = useState("umkm");
-  const [email, setEmail] = useState(CURRENT_USERS.umkm.contact.email);
-  const [password, setPassword] = useState(DEMO_PASSWORD);
+  const next = searchParams.get("next");
+  const homeFor = useCallback((appRole) => safeNext(next, appRole) || ROLES[appRole].home, [next]);
+  const checkingSession = useGuestOnly(homeFor);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState(() => REASONS[searchParams.get("reason")] || null);
+  const [loading, setLoading] = useState(false);
+  const [lockUntil, setLockUntil] = useState(null);
+  const lockLeft = useCountdown(lockUntil);
+  const identifierRef = useRef(null);
+  const passwordWrap = useRef(null);
 
-  // Pilih role → isi akun dummy role itu, supaya bisa langsung masuk.
-  function pickRole(key) {
-    setSelected(key);
-    setEmail(CURRENT_USERS[key].contact.email);
-    setPassword(DEMO_PASSWORD);
+  // Prefill dari "Ingat saya" (dibaca setelah mount — hindari hydration mismatch).
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(REMEMBER_KEY) || "null");
+      if (saved?.identifier) {
+        setIdentifier(saved.identifier);
+        setRemember(true);
+      }
+    } catch { /* storage tidak tersedia */ }
+  }, []);
+
+  // Kunci selesai → pesan kunci hilang sendiri.
+  useEffect(() => {
+    if (lockUntil && lockLeft === 0) {
+      setLockUntil(null);
+      setFormError((f) => (f?.code === "LOCKED" ? null : f));
+    }
+  }, [lockLeft, lockUntil]);
+
+  const locked = lockLeft > 0;
+
+  function clearTransientError() {
+    setFormError((f) => (f && f.code !== "LOCKED" ? null : f));
   }
 
-  // Nanti kalau backend-nya sudah beneran, role ini diganti hasil login/session
-  // asli. Tujuan setelah login (ROLES[role].home) dibaca dari config/roles.js.
-  function handleLogin(e) {
+  function changeIdentifier(v) {
+    setIdentifier(v);
+    if (errors.identifier) setErrors((e) => ({ ...e, identifier: validateLogin({ identifier: v, password: "x" }).identifier }));
+    clearTransientError();
+  }
+  function changePassword(v) {
+    setPassword(v);
+    if (errors.password) setErrors((e) => ({ ...e, password: v ? undefined : "Password wajib diisi" }));
+    clearTransientError();
+  }
+
+  function fillDemo(account) {
+    setIdentifier(account.identifier);
+    setPassword(account.password);
+    setErrors({});
+    clearTransientError();
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    setRole(selected);
-    router.push(ROLES[selected].home);
+    if (loading || locked) return;
+    const errs = validateLogin({ identifier, password });
+    setErrors(errs);
+    setFormError(null);
+    if (Object.keys(errs).length) {
+      if (errs.identifier) identifierRef.current?.focus();
+      else passwordWrap.current?.querySelector("input")?.focus();
+      return;
+    }
+
+    const value = normalizeIdentifier(channelOf(identifier), identifier);
+    setLoading(true);
+    const res = await login({ identifier: value, password });
+    setLoading(false);
+
+    if (res.ok) {
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, JSON.stringify({ identifier: value }));
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch { /* abaikan */ }
+      setPassword("");
+      const { appRole, status } = res.data.user;
+      setRole(appRole);
+      // Mahasiswa yang belum terverifikasi diarahkan menyelesaikan verifikasi identitas.
+      router.push(status === "PENDING_VERIFICATION" && appRole !== "trust" ? `/verify?type=${appRole}` : homeFor(appRole));
+      return;
+    }
+
+    const err = res.error;
+    if (err.code === "VALIDATION") {
+      setErrors({ identifier: err.fields?.identifier, password: err.fields?.password });
+      return;
+    }
+    if (err.code === "LOCKED") setLockUntil(Date.now() + err.retryAfter * 1000);
+    setFormError({ code: err.code, tone: err.code === "LOCKED" ? "warning" : "error", title: err.message });
   }
+
+  function renderFormError() {
+    if (!formError) return null;
+    if (formError.code === "LOCKED") {
+      return (
+        <FormAlert tone="warning" title="Terlalu banyak percobaan gagal">
+          Demi keamanan, login dikunci sementara. Coba lagi dalam <b>{formatCountdown(lockLeft)}</b>.
+        </FormAlert>
+      );
+    }
+    if (formError.code === "ROLE_UNSUPPORTED") {
+      return <FormAlert title={formError.title}>Akun mentor belum memiliki tampilan di aplikasi web.</FormAlert>;
+    }
+    return <FormAlert tone={formError.tone} title={formError.title}>{formError.text}</FormAlert>;
+  }
+
+  if (checkingSession) return <SessionLoading />;
 
   return (
-    <div className="auth-wrap">
-      <div className="auth-card card card-pad" style={{ padding: 32 }}>
-        <div className="auth-brand"><div className="mark">D</div><div className="name t-h3">Digital.in</div></div>
-        <h2 className="t-h2" style={{ textAlign: "center" }}>Masuk ke akunmu</h2>
-        <p className="t-small muted mt-8" style={{ textAlign: "center" }}>
-          Belum punya akun? <Link className="link-btn" href="/choose-type">Daftar di sini</Link>
-        </p>
-        <form className="mt-24" onSubmit={handleLogin}>
-          <div className="field">
-            <label>Masuk sebagai</label>
-            <div role="radiogroup" aria-label="Masuk sebagai" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-              {ROLE_OPTIONS.map((key) => (
-                <button
-                  key={key} type="button" role="radio" aria-checked={selected === key}
-                  className={`radio-card ${selected === key ? "selected" : ""}`}
-                  style={{ justifyContent: "center", textAlign: "center", padding: "10px 6px", fontSize: 13, fontWeight: 600, background: selected === key ? undefined : "transparent", color: "inherit", fontFamily: "inherit" }}
-                  onClick={() => pickRole(key)}
-                >
-                  {key === "mahasiswa" ? "Mahasiswa" : ROLES[key].label}
+    <AuthShell aside={ASIDE} topLink={{ text: "Belum punya akun?", label: "Daftar", href: "/choose-type" }}>
+      <h1 className="au-title">Masuk ke akunmu</h1>
+      <p className="au-sub">Senang melihatmu lagi. Masuk dengan email atau nomor WhatsApp yang kamu daftarkan.</p>
+
+      <form className="au-form" onSubmit={handleSubmit} noValidate>
+        {renderFormError()}
+
+        <div className="field">
+          <label htmlFor="login-identifier">Email atau nomor WhatsApp</label>
+          <input
+            ref={identifierRef} id="login-identifier" name="identifier" type="text" className="input au-input"
+            placeholder="nama@email.com atau 0812…" autoComplete="username" autoCapitalize="none" spellCheck={false}
+            value={identifier} onChange={(e) => changeIdentifier(e.target.value)}
+            aria-invalid={!!errors.identifier || undefined} aria-describedby={errors.identifier ? "login-identifier-err" : undefined}
+          />
+          <FieldError id="login-identifier-err" message={errors.identifier} />
+        </div>
+
+        <div className="field" ref={passwordWrap}>
+          <div className="au-label-row">
+            <label htmlFor="login-password">Password</label>
+            <Link href="/forgot-password" className="link-btn au-forgot">Lupa password?</Link>
+          </div>
+          <PasswordInput
+            id="login-password" value={password} onChange={(e) => changePassword(e.target.value)}
+            autoComplete="current-password" placeholder="Masukkan password"
+            invalid={!!errors.password} describedBy={errors.password ? "login-password-err" : undefined}
+          />
+          <FieldError id="login-password-err" message={errors.password} />
+        </div>
+
+        <label className="au-check">
+          <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+          <span>Ingat saya di perangkat ini</span>
+        </label>
+
+        <SubmitButton loading={loading} disabled={locked} loadingText="Memeriksa akun…">
+          {locked ? `Coba lagi dalam ${formatCountdown(lockLeft)}` : "Masuk"}
+        </SubmitButton>
+
+        {USE_MOCK && demoAccounts.length > 0 && (
+          <p className="au-demo-hint">
+            Mode demo — isi akun:{" "}
+            {demoAccounts.map((a, i) => (
+              <span key={a.role}>
+                {i > 0 && " · "}
+                <button type="button" className="link-btn" onClick={() => fillDemo(a)}>
+                  {ROLES[ROLE_FROM_BACKEND[a.role]]?.label || a.role}
                 </button>
-              ))}
-            </div>
-          </div>
-          <div className="field"><label htmlFor="login-email">Email</label><input id="login-email" className="input" type="email" placeholder="nama@email.com" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-          <div className="field"><label htmlFor="login-pass">Kata sandi</label><input id="login-pass" className="input" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
-          <div className="row-between mb-16">
-            <label className="t-small row gap-6"><input type="checkbox" /> Ingat saya</label>
-            <Link className="link-btn" href="/forgot-password">Lupa kata sandi?</Link>
-          </div>
-          <button type="submit" className="btn btn-primary btn-block btn-lg">Masuk</button>
-        </form>
-      </div>
-    </div>
+              </span>
+            ))}
+          </p>
+        )}
+      </form>
+
+      <p className="au-switch">
+        Belum punya akun? <Link href="/choose-type" className="link-btn">Daftar gratis</Link>
+      </p>
+    </AuthShell>
   );
 }

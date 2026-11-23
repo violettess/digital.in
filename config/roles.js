@@ -138,6 +138,34 @@ export const ROLES = {
   },
 };
 
+// Mentor (backend role MENTOR): meninjau submission mahasiswa sebelum diteruskan ke UMKM
+// (GET /mentor/review-queue, POST /submissions/{id}/mentor-review).
+ROLES.mentor = {
+  key: "mentor",
+  label: "Mentor",
+  home: "/dashboard",
+  sidebarMenu: [
+    { href: "/dashboard", label: "Antrian Review", icon: "home", permission: "review_submissions" },
+    { href: "/profile", label: "Profil", icon: "user" },
+  ],
+  profileFields: [{ key: "role", label: "Peran" }],
+  profileMenu: [
+    { href: "/profile", label: "Profil Saya", icon: "user", group: "top" },
+    { href: "/settings", label: "Pengaturan", icon: "gear", group: "bottom" },
+    { href: "/help", label: "Bantuan", icon: "help", group: "bottom" },
+  ],
+  features: { onlineToggle: false, chatWidget: false },
+  notificationPrefs: ["Submission baru untuk direview"],
+  settingsNav: [
+    {
+      title: "Pengaturan Pengguna",
+      items: USER_SETTINGS_ITEMS.filter((i) => i.id !== "pengaturan-profil" && i.id !== "verifikasi"),
+    },
+  ],
+  settings: { verificationDocs: [] },
+  permissions: ["review_submissions", "edit_profile"],
+};
+
 // Permission yang dibutuhkan tiap prefix URL. `null`/nggak ada di daftar =
 // semua role yang login boleh buka (mis. /dashboard, /profile, /settings).
 // Butuh SALAH SATU permission di array (bukan semuanya) — itu cara

@@ -1,10 +1,18 @@
 "use client";
 
+<<<<<<< HEAD
+import { forwardRef, useState, useRef } from "react";
+=======
 import { useState, useRef } from "react";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@/components/Icon";
 import UserMenuTrigger from "./UserMenuTrigger";
+<<<<<<< HEAD
+import NotificationBell from "./NotificationBell";
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import SidebarBrandToggle from "./SidebarBrandToggle";
 import SearchPanel from "@/components/search/SearchPanel";
 import { useSearchPanel } from "@/context/SearchPanelContext";
@@ -14,7 +22,18 @@ import { useSearchPanel } from "@/context/SearchPanelContext";
 const SIDEBAR_WIDTH_OPEN = 240;
 const SIDEBAR_WIDTH_COLLAPSED = 72;
 
+<<<<<<< HEAD
+const RESET_BUTTON = { width: "100%", background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", color: "inherit", font: "inherit" };
+
+// `mobile`/`mobileOpen`: di bawah md sidebar jadi drawer off-canvas yang
+// dikontrol AppShell; `onNavigate` dipanggil saat menu dipilih (menutup
+// drawer). Submenu dibuka lewat klik/tap/keyboard (tombol dengan
+// aria-expanded); hover hanya membantu di pointer mouse — di layar sentuh,
+// tap memicu mouseenter lalu click sehingga submenu langsung tertutup lagi.
+const Sidebar = forwardRef(function Sidebar({ id, open, onToggle, navItems, user, mobile = false, mobileOpen = false, onNavigate }, ref) {
+=======
 export default function Sidebar({ open, onToggle, navItems, user }) {
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   const pathname = usePathname();
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const closeTimer = useRef(null);
@@ -23,10 +42,24 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
 
   const scheduleClose = () => { closeTimer.current = setTimeout(() => setOpenSubmenu(null), 150); };
   const cancelClose = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
+<<<<<<< HEAD
+  const isMouse = (e) => e.pointerType === "mouse" && !mobile;
+
+  return (
+    <>
+    <aside
+      id={id}
+      ref={ref}
+      className={`dash-sidebar ${open ? "" : "collapsed"} ${mobileOpen ? "mobile-open" : ""}`}
+      aria-label="Navigasi utama"
+      {...(mobile ? { role: "dialog", "aria-modal": mobileOpen || undefined, "aria-hidden": !mobileOpen || undefined } : {})}
+    >
+=======
 
   return (
     <>
     <aside className={`dash-sidebar ${open ? "" : "collapsed"}`}>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       <div className="sidebar-top" style={{ padding: "16px 16px 14px" }}>
         <SidebarBrandToggle open={open} onToggle={onToggle} />
       </div>
@@ -34,6 +67,10 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
       {/* Menu akun dipindah ke sini — atas, sebelum daftar nav — sesuai permintaan */}
       <div style={{ padding: "0 8px 8px", borderBottom: "1px solid var(--border)", marginBottom: 8 }}>
         <UserMenuTrigger user={user} sidebarOpen={open} />
+<<<<<<< HEAD
+        <NotificationBell sidebarOpen={open} />
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       </div>
 
       <nav
@@ -52,13 +89,22 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
               ? pathname === item.href || pathname.startsWith(item.href + "/")
               : item.children?.some((c) => pathname === c.href.split("?")[0] || pathname.startsWith(c.href.split("?")[0] + "/"));
           const isSubmenuOpen = openSubmenu === item.label;
+<<<<<<< HEAD
+          const submenuId = `submenu-${i}`;
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
           const row = (
             <div
               className={`nav-row ${active ? "active" : ""}`}
+<<<<<<< HEAD
+              onPointerEnter={hasChildren ? (e) => { if (!isMouse(e)) return; cancelClose(); setOpenSubmenu(item.label); } : undefined}
+              onPointerLeave={hasChildren ? (e) => { if (isMouse(e)) scheduleClose(); } : undefined}
+=======
               onMouseEnter={hasChildren ? () => { cancelClose(); setOpenSubmenu(item.label); } : undefined}
               onMouseLeave={hasChildren ? scheduleClose : undefined}
               onClick={hasChildren ? () => setOpenSubmenu(isSubmenuOpen ? null : item.label) : undefined}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             >
               <span className="nav-icon"><Icon name={item.icon} /></span>
                 <span
@@ -67,7 +113,11 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
                 >
                   {item.label}
                 </span>
+<<<<<<< HEAD
+                {hasChildren && open && <span className="nav-caret"><Icon name={mobile && isSubmenuOpen ? "chevDown" : "chevRight"} /></span>}
+=======
                 {hasChildren && open && <span className="nav-caret"><Icon name="chevRight" /></span>}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             </div>
           );
 
@@ -83,12 +133,42 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
                 <button
                   type="button"
                   className={itemClassName}
+<<<<<<< HEAD
+                  style={{ ...itemStyle, ...RESET_BUTTON }}
+                  onClick={() => { onNavigate?.(); openSearch(); }}
+=======
                   style={{ ...itemStyle, width: "100%", background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer" }}
                   onClick={() => openSearch()}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
                 >
                   {row}
                 </button>
               ) : item.href ? (
+<<<<<<< HEAD
+                <Link href={item.href} className={itemClassName} style={itemStyle} onClick={() => onNavigate?.()}>{row}</Link>
+              ) : (
+                <button
+                  type="button"
+                  className={itemClassName}
+                  style={{ ...itemStyle, ...RESET_BUTTON }}
+                  aria-expanded={isSubmenuOpen}
+                  aria-controls={isSubmenuOpen ? submenuId : undefined}
+                  aria-label={open ? undefined : item.label}
+                  onClick={() => setOpenSubmenu(isSubmenuOpen ? null : item.label)}
+                >
+                  {row}
+                </button>
+              )}
+              {hasChildren && isSubmenuOpen && (
+                <div
+                  id={submenuId}
+                  className="nav-flyout"
+                  onPointerEnter={(e) => { if (isMouse(e)) cancelClose(); }}
+                  onPointerLeave={(e) => { if (isMouse(e)) scheduleClose(); }}
+                >
+                  {item.children.map((c) => (
+                    <Link key={c.href} href={c.href} className="nav-flyout-item" onClick={() => { setOpenSubmenu(null); onNavigate?.(); }}>
+=======
                 <Link href={item.href} className={itemClassName} style={itemStyle}>{row}</Link>
               ) : (
                 <div className={itemClassName} style={itemStyle}>{row}</div>
@@ -97,6 +177,7 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
                 <div className="nav-flyout" onMouseEnter={cancelClose} onMouseLeave={scheduleClose}>
                   {item.children.map((c) => (
                     <Link key={c.href} href={c.href} className="nav-flyout-item" onClick={() => setOpenSubmenu(null)}>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
                       {c.label}
                     </Link>
                   ))}
@@ -109,8 +190,18 @@ export default function Sidebar({ open, onToggle, navItems, user }) {
     </aside>
 
     {hasSearchItem && (
+<<<<<<< HEAD
+      <SearchPanel sidebarWidth={mobile ? 0 : open ? SIDEBAR_WIDTH_OPEN : SIDEBAR_WIDTH_COLLAPSED} />
+    )}
+    </>
+  );
+});
+
+export default Sidebar;
+=======
       <SearchPanel sidebarWidth={open ? SIDEBAR_WIDTH_OPEN : SIDEBAR_WIDTH_COLLAPSED} />
     )}
     </>
   );
 }
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99

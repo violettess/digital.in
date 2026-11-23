@@ -5,7 +5,13 @@ import Icon from "@/components/Icon";
 import Modal from "@/components/ui/Modal";
 import ProjectCard from "@/components/projects/ProjectCard";
 import { useProjects } from "@/context/ProjectsContext";
+<<<<<<< HEAD
+import { projectsApi } from "@/lib/projects/api";
+// Tanggal sungguhan (bukan MOCK_TODAY) karena backend menolak tenggat yang sudah lewat.
+const MOCK_TODAY = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+=======
 import { MOCK_TODAY } from "@/lib/projects.mock";
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 import { enrichProject } from "@/lib/progress";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import {
@@ -26,10 +32,32 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
   const [draft, setDraft] = useState(emptyDraft);
   const [touched, setTouched] = useState({ 0: false, 1: false });
   const [skillInput, setSkillInput] = useState("");
+<<<<<<< HEAD
+  const [apiCats, setApiCats] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  // Kategori dari backend (id uuid dibutuhkan POST /projects).
+  useEffect(() => {
+    if (!open) return;
+    projectsApi.categories().then((res) => {
+      if (res.ok && res.data.length) {
+        setApiCats(res.data);
+        setDraft((d) => (res.data.some((c) => c.name === d.category) ? d : { ...d, category: res.data[0].name }));
+      }
+    });
+  }, [open]);
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
 
   // Mulai dari form kosong tiap kali modal dibuka.
   useEffect(() => {
     if (open) {
+<<<<<<< HEAD
+      setSubmitError(null);
+      setSaving(false);
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       setStep(0);
       setDraft(emptyDraft());
       setTouched({ 0: false, 1: false });
@@ -60,9 +88,37 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
     [step, v.ok, draft, umkmName]
   );
 
+<<<<<<< HEAD
+  async function submit() {
+    if (!v.ok || saving) return;
+    setSaving(true);
+    setSubmitError(null);
+    const raw = buildPostedProject(draft, umkmName, MOCK_TODAY);
+    const cat = apiCats.find((c) => c.name === draft.category);
+    if (!cat) {
+      setSaving(false);
+      setSubmitError("Kategori belum termuat dari server. Tutup lalu buka lagi form ini.");
+      return;
+    }
+    const res = await projectsApi.createAndPublish({
+      categoryId: cat.id,
+      title: raw.title,
+      description: raw.description,
+      budget: raw.budget,
+      deadline: raw.deadline,
+      milestones: raw.milestones,
+    });
+    setSaving(false);
+    if (!res.ok) {
+      setSubmitError(res.error.message);
+      return;
+    }
+    const project = { ...raw, id: res.data.id };
+=======
   function submit() {
     if (!v.ok) return;
     const project = buildPostedProject(draft, umkmName, MOCK_TODAY);
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
     addProject(project);
     onPosted?.(project);
     onClose();
@@ -94,7 +150,11 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
           <div className="field">
             <label htmlFor="pp-cat">Kategori / bidang</label>
             <select id="pp-cat" className="input" value={draft.category} onChange={(e) => set({ category: e.target.value })}>
+<<<<<<< HEAD
+              {(apiCats.length ? apiCats.map((c) => c.name) : CATEGORIES).map((c) => <option key={c}>{c}</option>)}
+=======
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
             </select>
           </div>
           <div className="field">
@@ -218,6 +278,10 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
         </div>
       )}
 
+<<<<<<< HEAD
+      {submitError && <div className="pp-error" role="alert" style={{ marginTop: 12 }}>{submitError}</div>}
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       <div className="row gap-8" style={{ justifyContent: "flex-end", marginTop: 22 }}>
         {step === 0
           ? <button type="button" className="btn btn-secondary" onClick={onClose}>Batal</button>
@@ -225,7 +289,11 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
         {step < 2 ? (
           <button type="button" className="btn btn-primary" disabled={!canNext} onClick={() => setStep((s) => s + 1)}>Berikutnya</button>
         ) : (
+<<<<<<< HEAD
+          <button type="button" className="btn btn-primary" disabled={!v.ok || saving} onClick={submit}>{saving ? "Menyimpan..." : "Posting Proyek"}</button>
+=======
           <button type="button" className="btn btn-primary" disabled={!v.ok} onClick={submit}>Posting Proyek</button>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         )}
       </div>
     </Modal>

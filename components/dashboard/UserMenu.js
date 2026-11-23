@@ -10,12 +10,20 @@ import { initials } from "@/lib/mock-data";
 // group "top" tampil sebelum baris Tema, "bottom" sesudahnya, persis
 // urutan visual yang sudah ada (Profil Saya lalu Tema/Pengaturan/Bantuan)
 // — cuma sekarang datanya bisa beda per role.
+<<<<<<< HEAD
+export default function UserMenu({ className = "", user, profileMenu = [], showOnlineToggle = true, onlineForMessages, onToggleOnline, onLogout }) {
+=======
 export default function UserMenu({ user, profileMenu = [], showOnlineToggle = true, onlineForMessages, onToggleOnline, onLogout }) {
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   const topItems = profileMenu.filter((i) => i.group !== "bottom");
   const bottomItems = profileMenu.filter((i) => i.group === "bottom");
 
   return (
+<<<<<<< HEAD
+    <div className={`user-menu card ${className}`} role="menu" onClick={(e) => e.stopPropagation()}>
+=======
     <div className="user-menu card" role="menu" onClick={(e) => e.stopPropagation()}>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
       <div className="user-menu-header">
         <div className="avatar avatar-lg" style={{ background: user.avatarBg || "var(--primary-light)" }}>
           {initials(user.name)}
@@ -23,6 +31,10 @@ export default function UserMenu({ user, profileMenu = [], showOnlineToggle = tr
         <div>
           <div className="t-h3" style={{ fontSize: 15 }}>{user.name}</div>
           <div className="t-small muted">{user.plan || "Freelancer Basic"}</div>
+<<<<<<< HEAD
+          {user.email && <div className="t-caption muted" style={{ overflowWrap: "anywhere" }}>{user.email}</div>}
+=======
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
         </div>
       </div>
 

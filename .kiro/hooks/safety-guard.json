@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Blokir perintah berbahaya (autopilot backend)",
+      "trigger": "PreToolUse",
+      "description": "Memblokir force push, push ke main/master, rm -rf ke folder sistem/home, curl|sh, dan perintah merusak lain sebelum dijalankan, supaya aman dipakai di mode otonom.",
+      "matcher": "execute_bash",
+      "action": {
+        "type": "command",
+        "command": "node .kiro/hooks/scripts/guard.mjs",
+        "timeout": 10
+      }
+    }
+  ]
+}

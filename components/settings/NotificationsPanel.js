@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+import { ComingSoon } from "./ProfileForm";
+
+// Tab "Pengaturan Notifikasi": preferensi notifikasi belum punya endpoint → "Segera hadir".
+export default function NotificationsPanel() {
+  return (
+    <ComingSoon title="Pengaturan Notifikasi">
+      Memilih notifikasi apa saja yang dikirim lewat email atau push belum tersedia. Notifikasi penting
+      (kode verifikasi, status proyek) tetap dikirim seperti biasa.
+    </ComingSoon>
+=======
 "use client";
 
 import { useState } from "react";
@@ -42,5 +53,6 @@ export default function NotificationsPanel({ config, showToast }) {
         </SettingsCard>
       ))}
     </>
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
   );
 }

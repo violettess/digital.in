@@ -59,7 +59,11 @@ export default function InviteModal({ talent: current, umkmName, projects, onClo
                 type="button"
                 className="btn btn-primary"
                 disabled={!message.trim()}
+<<<<<<< HEAD
+                onClick={() => onSend(shown, projects.find((p) => p.id === projectId), message.trim())}
+=======
                 onClick={() => onSend(shown, projects.find((p) => p.id === projectId))}
+>>>>>>> 3d15cf437f7342a62ab35a2a9a5a2e615e4b4f99
               >
                 Kirim Undangan
               </button>
