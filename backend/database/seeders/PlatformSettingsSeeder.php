@@ -14,7 +14,6 @@ class PlatformSettingsSeeder extends Seeder
             'platform_fee_pct' => 12,
             'mentor_share_pct' => 30,
             'mentor_min_fee' => 10000,
-            'min_milestone_amount' => 150000,
             'max_revisions_per_milestone' => 2,
             'max_mentor_returns_per_milestone' => 3,
             'max_active_contracts_per_student' => 2,

@@ -11,7 +11,7 @@ const MOCK_TODAY = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
 import { enrichProject } from "@/lib/progress";
 import { formatRupiah, formatTanggal } from "@/lib/format";
 import {
-  CATEGORIES, PRICE_TYPES, SKILL_OPTIONS, emptyDraft, newMilestone, validateDraft,
+  PRICE_TYPES, SKILL_OPTIONS, emptyDraft, newMilestone, validateDraft,
   buildPostedProject, sumAmounts,
 } from "@/lib/projects-posting";
 
@@ -29,19 +29,38 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
   const [touched, setTouched] = useState({ 0: false, 1: false });
   const [skillInput, setSkillInput] = useState("");
   const [apiCats, setApiCats] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState(null);
+  const [categoryRequest, setCategoryRequest] = useState(0);
   const [saving, setSaving] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
   // Kategori dari backend (id uuid dibutuhkan POST /projects).
   useEffect(() => {
     if (!open) return;
+    let active = true;
+    setCategoriesLoading(true);
+    setCategoriesError(null);
     projectsApi.categories().then((res) => {
-      if (res.ok && res.data.length) {
+      if (!active) return;
+      if (!res.ok) {
+        setApiCats([]);
+        setCategoryId("");
+        setCategoriesError(res.error.message);
+      } else if (res.data.length === 0) {
+        setApiCats([]);
+        setCategoryId("");
+        setCategoriesError("Belum ada kategori aktif di server. Coba muat ulang atau hubungi admin.");
+      } else {
         setApiCats(res.data);
-        setDraft((d) => (res.data.some((c) => c.name === d.category) ? d : { ...d, category: res.data[0].name }));
+        setCategoryId(res.data[0].id);
+        setDraft((d) => ({ ...d, category: res.data[0].name }));
       }
+      setCategoriesLoading(false);
     });
-  }, [open]);
+    return () => { active = false; };
+  }, [open, categoryRequest]);
 
   // Mulai dari form kosong tiap kali modal dibuka.
   useEffect(() => {
@@ -52,6 +71,8 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
       setDraft(emptyDraft());
       setTouched({ 0: false, 1: false });
       setSkillInput("");
+      setApiCats([]);
+      setCategoryId("");
     }
   }, [open]);
 
@@ -83,14 +104,13 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
     setSaving(true);
     setSubmitError(null);
     const raw = buildPostedProject(draft, umkmName, MOCK_TODAY);
-    const cat = apiCats.find((c) => c.name === draft.category);
-    if (!cat) {
+    if (!categoryId) {
       setSaving(false);
-      setSubmitError("Kategori belum termuat dari server. Tutup lalu buka lagi form ini.");
+      setSubmitError("Pilih kategori yang tersedia dari server sebelum mem-post proyek.");
       return;
     }
     const res = await projectsApi.createAndPublish({
-      categoryId: cat.id,
+      categoryId,
       title: raw.title,
       description: raw.description,
       budget: raw.budget,
@@ -110,7 +130,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
 
   const allSkills = [...SKILL_OPTIONS, ...draft.skills.filter((s) => !SKILL_OPTIONS.includes(s))];
   const hourly = draft.priceType === "Per Jam";
-  const canNext = step === 0 ? v.step1Ok : step === 1 ? v.step2Ok : v.ok;
+  const canNext = step === 0 ? v.step1Ok && !!categoryId && !categoriesLoading : step === 1 ? v.step2Ok : v.ok;
   const showErrors = touched[step];
 
   return (
@@ -133,9 +153,30 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
           </div>
           <div className="field">
             <label htmlFor="pp-cat">Kategori / bidang</label>
-            <select id="pp-cat" className="input" value={draft.category} onChange={(e) => set({ category: e.target.value })}>
-              {(apiCats.length ? apiCats.map((c) => c.name) : CATEGORIES).map((c) => <option key={c}>{c}</option>)}
+            <select
+              id="pp-cat"
+              className="input"
+              value={categoryId}
+              disabled={categoriesLoading || apiCats.length === 0}
+              onChange={(e) => {
+                const selected = apiCats.find((c) => c.id === e.target.value);
+                if (selected) {
+                  setCategoryId(selected.id);
+                  set({ category: selected.name });
+                }
+              }}
+            >
+              {apiCats.length === 0 && <option value="">{categoriesLoading ? "Memuat kategori..." : "Kategori tidak tersedia"}</option>}
+              {apiCats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
+            {categoriesError && (
+              <div className="row gap-8 mt-8" role="alert">
+                <span className="pp-error">{categoriesError}</span>
+                <button type="button" className="btn btn-secondary btn-sm" disabled={categoriesLoading} onClick={() => setCategoryRequest((n) => n + 1)}>
+                  {categoriesLoading ? "Memuat..." : "Coba lagi"}
+                </button>
+              </div>
+            )}
           </div>
           <div className="field">
             <label htmlFor="pp-desc">Deskripsi proyek</label>
@@ -204,7 +245,7 @@ export default function PostProjectModal({ open, onClose, umkmName, onPosted }) 
                   <div className="pp-ms-grid">
                     <div className="field" style={{ marginBottom: 0 }}>
                       <label htmlFor={`ms-amt-${m.id}`}>{hourly ? "Estimasi nominal (Rp)" : "Nominal (Rp)"}</label>
-                      <input id={`ms-amt-${m.id}`} className="input" type="number" min="0" step="10000" inputMode="numeric" value={m.amount} onChange={(e) => setMilestone(m.id, { amount: e.target.value })} />
+                      <input id={`ms-amt-${m.id}`} className="input" type="number" min="1" step="1" inputMode="numeric" value={m.amount} onChange={(e) => setMilestone(m.id, { amount: e.target.value })} />
                       {showErrors && err.amount && <div className="pp-error" role="alert">{err.amount}</div>}
                     </div>
                     <div className="field" style={{ marginBottom: 0 }}>

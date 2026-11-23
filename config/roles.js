@@ -23,18 +23,8 @@ export const ROLES = {
     home: "/dashboard",
     sidebarMenu: [
       { href: "/dashboard", label: "Dashboard", icon: "home" },
-      { action: "search", label: "Cari Proyek", icon: "search", permission: "view_jobs" },
-      { label: "Proyek Saya", icon: "folder", permission: "view_own_projects", children: [
-        { href: "/projects?tab=aktif", label: "Proyek Aktif" },
-        { href: "/projects?tab=semua", label: "Semua Proyek" },
-        { href: "/projects?tab=disimpan", label: "Proyek yang Disimpan" },
-      ] },
-      { label: "Penghasilan", icon: "wallet", permission: "view_earnings", children: [
-        { href: "/earnings", label: "Ringkasan" },
-        { href: "/earnings?tab=transaksi", label: "Riwayat Transaksi" },
-        { href: "/earnings?tab=penarikan", label: "Penarikan Dana" },
-        { href: "/earnings?tab=faktur", label: "Faktur" },
-      ] },
+      { href: "/projects", label: "Proyek Saya", icon: "folder", permission: "view_own_projects" },
+      { href: "/earnings", label: "Penghasilan", icon: "wallet", permission: "view_earnings" },
       { href: "/profile", label: "Profil", icon: "user" },
     ],
     profileFields: [

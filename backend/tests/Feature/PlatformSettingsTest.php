@@ -18,7 +18,8 @@ class PlatformSettingsTest extends TestCase
         expect($settings->get('platform_fee_pct'))->toBe(12)
             ->and($settings->get('start_reminder_hours'))->toBe([24, 72])
             ->and($settings->get('withdrawal_fee'))->toBeNull()
+            ->and($settings->get('min_milestone_amount'))->toBeNull()
             ->and($settings->get('unknown_setting', 'fallback'))->toBe('fallback')
-            ->and($settings->all())->toHaveCount(26);
+            ->and($settings->all())->toHaveCount(25);
     }
 }

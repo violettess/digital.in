@@ -29,7 +29,7 @@ Jika dokumen tidak menjawab, saling bertentangan, atau kamu perlu menyimpang dar
 - Pengerjaan dimulai **hanya** saat mahasiswa klik *Mulai Kerja*. Tidak ada auto-start.
 - Pembatalan: status `AWAITING_PAYMENT` / `FUNDED` → batal langsung, nilai project dikembalikan penuh (biaya gateway tidak). Status `IN_PROGRESS` → pengajuan, admin memutuskan alokasi dana per milestone.
 - UMKM tidak merespons: reminder H+3/H+7/H+10 → alert admin H+14 → admin wajib follow up → batas 7 hari setelah follow up → baru admin memutuskan. Tidak ada auto-approve.
-- Mahasiswa maks **2 kontrak aktif**. Milestone minimal Rp 150.000. Tarik saldo minimal Rp 20.000, biaya transfer ditanggung penarik.
+- Mahasiswa maks **2 kontrak aktif**. Nominal milestone harus integer Rupiah lebih dari Rp 0. Tarik saldo minimal Rp 20.000, biaya transfer ditanggung penarik.
 - Biaya payment gateway ditanggung UMKM. Premium listing Rp 50.000 / 30 hari. Hanya mahasiswa yang menilai mentor.
 
 ## Aturan Teknis Wajib

@@ -211,7 +211,7 @@ final class ApplicationService
     }
 
     /**
-     * Total milestone = harga penawaran, tiap milestone >= min_milestone_amount,
+     * Total milestone = harga penawaran, tiap milestone bernilai positif,
      * due_date tidak mundur dari milestone sebelumnya.
      *
      * @param  list<array>  $milestones
@@ -219,17 +219,15 @@ final class ApplicationService
      */
     private function validateMilestones(array $milestones, int $offeredPrice): array
     {
-        $minAmount = $this->settings->int('min_milestone_amount');
         $normalized = [];
         $previousDue = null;
 
         foreach (array_values($milestones) as $index => $milestone) {
             $amount = (int) $milestone['amount'];
-            if ($amount < $minAmount) {
-                throw new BusinessRuleViolation("Each milestone must be at least Rp {$minAmount}.", [
+            if ($amount <= 0) {
+                throw new BusinessRuleViolation('Each milestone amount must be a positive integer.', [
                     'milestone_index' => $index,
                     'amount' => $amount,
-                    'min_milestone_amount' => $minAmount,
                 ]);
             }
 

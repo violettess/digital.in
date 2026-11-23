@@ -21,7 +21,6 @@ final class SettingsService
         'platform_fee_pct' => ['numeric', 'between:10,15', 'decimal:0,2'],
         'mentor_share_pct' => ['numeric', 'between:0,100', 'decimal:0,2'],
         'mentor_min_fee' => ['integer', 'min:0'],
-        'min_milestone_amount' => ['integer', 'min:1'],
         'max_revisions_per_milestone' => ['integer', 'min:0', 'max:10'],
         'max_mentor_returns_per_milestone' => ['integer', 'min:1', 'max:10'],
         'max_active_contracts_per_student' => ['integer', 'min:1', 'max:10'],

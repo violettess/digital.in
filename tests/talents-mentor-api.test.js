@@ -114,11 +114,17 @@ describe("milestone saran UMKM", () => {
     ]);
   });
 
-  it("validasi form menolak milestone di bawah Rp150.000", () => {
-    const draft = { title: "Logo", milestones: [{ ...newMilestone(), name: "A", amount: "100000", deadline: "2099-01-01" }] };
-    const v = validateDraft(draft, "2026-01-01");
-    expect(v.ok).toBe(false);
-    expect(Object.values(v.milestoneErrors)[0].amount).toMatch(/150\.000/);
+  it("menerima nominal milestone positif berapa pun dan menolak nol", () => {
+    const makeDraft = (amount) => ({
+      title: "Logo",
+      milestones: [{ ...newMilestone(), name: "A", amount, deadline: "2099-01-01" }],
+    });
+
+    expect(validateDraft(makeDraft("1"), "2026-01-01").ok).toBe(true);
+    const zero = validateDraft(makeDraft("0"), "2026-01-01");
+    expect(zero.ok).toBe(false);
+    expect(Object.values(zero.milestoneErrors)[0].amount).toMatch(/lebih dari 0/);
+    expect(validateDraft(makeDraft("1.5"), "2026-01-01").ok).toBe(false);
   });
 });
 
