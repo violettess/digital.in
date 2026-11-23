@@ -6,6 +6,7 @@ import { projectsApi } from "@/lib/projects/api";
 import { USE_MOCK } from "@/lib/auth/api";
 import { enrichProject } from "@/lib/progress";
 import { MOCK_TODAY } from "@/lib/projects.mock";
+import { getTodayIso } from "@/lib/format";
 import { umkmProjects } from "@/lib/payments";
 import { applyPostedMilestones } from "@/lib/projects-posting";
 
@@ -76,11 +77,12 @@ export function useProjects() {
 
 export function useClientProjects(umkmName, { includeBase = true } = {}) {
   const { posted, overrides } = useProjects();
+  const asOf = USE_MOCK ? MOCK_TODAY : getTodayIso();
   return useMemo(() => {
     const base = includeBase && USE_MOCK
-      ? umkmProjects(umkmName).map((p) => (overrides[p.id] ? enrichProject({ ...p, milestones: overrides[p.id] }, MOCK_TODAY) : p))
+      ? umkmProjects(umkmName).map((p) => (overrides[p.id] ? enrichProject({ ...p, milestones: overrides[p.id] }, asOf) : p))
       : [];
-    const mine = posted.filter((p) => p.fromApi || p.client === umkmName).map((p) => enrichProject(p, MOCK_TODAY));
+    const mine = posted.filter((p) => p.fromApi || p.client === umkmName).map((p) => enrichProject(p, asOf));
     return [...mine, ...base];
-  }, [umkmName, includeBase, posted, overrides]);
+  }, [umkmName, includeBase, posted, overrides, asOf]);
 }

@@ -41,6 +41,22 @@ describe("projectsApi.categories", () => {
   });
 });
 
+describe("projectsApi.mine", () => {
+  it("tidak menampilkan draft gagal-publish sebagai proyek terbuka", async () => {
+    get.mockResolvedValue({
+      data: { data: [
+        { id: "draft-1", status: "DRAFT", title: "Percobaan lama" },
+        { id: "open-1", status: "OPEN", title: "Proyek aktif" },
+      ] },
+    });
+
+    const res = await projectsApi.mine("Kopi");
+
+    expect(res.ok).toBe(true);
+    expect(res.data.map((project) => project.id)).toEqual(["open-1"]);
+  });
+});
+
 describe("projectsApi.createAndPublish", () => {
   it("POST /projects lalu /publish dengan anggaran dibulatkan", async () => {
     post.mockResolvedValueOnce({ data: { data: { id: "p-1" } } }).mockResolvedValueOnce({ data: { data: {} } });

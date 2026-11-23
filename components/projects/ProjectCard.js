@@ -2,8 +2,9 @@
 
 import Icon from "@/components/Icon";
 import { STATUS_META, MOCK_TODAY } from "@/lib/projects.mock";
-import { formatRupiah, formatTanggal, sisaHari } from "@/lib/format";
+import { getTodayIso, formatRupiah, formatTanggal, sisaHari } from "@/lib/format";
 import { useChat } from "@/context/ChatContext";
+import { USE_MOCK } from "@/lib/auth/api";
 import ProgressHistoryPopover from "./ProgressHistoryPopover";
 
 const ACTIVE_NOTES = {
@@ -23,7 +24,8 @@ export default function ProjectCard({ project: p, onOpenDetail, isSaved, onToggl
   const { openWidget } = useChat();
   const meta = STATUS_META[p.status];
   const isActive = p.status in ACTIVE_NOTES;
-  const deadline = isActive || p.status === "terbuka" ? sisaHari(p.deadline, MOCK_TODAY) : null;
+  const today = USE_MOCK ? MOCK_TODAY : getTodayIso();
+  const deadline = isActive || p.status === "terbuka" ? sisaHari(p.deadline, today) : null;
   const muted = onToggleSave && !isSaved;
   const isClientView = perspective === "client";
   // Proyek yang baru diposting UMKM belum punya freelancer: tidak ada
