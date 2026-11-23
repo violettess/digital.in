@@ -156,7 +156,11 @@ class ProjectPhaseTest extends TestCase
         $this->as($this->umkm)->getJson('/api/v1/projects?mine=1')->assertOk()->assertJsonCount(2, 'data');
 
         // Daftar pelamar hanya untuk pemilik.
-        $this->as($this->umkm)->getJson("/api/v1/projects/{$open->id}/applications")->assertOk()->assertJsonCount(1, 'data');
+        $this->as($this->umkm)->getJson("/api/v1/projects/{$open->id}/applications")
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.proposed_milestones.0.title', 'Riset & konsep')
+            ->assertJsonPath('data.0.proposed_milestones.1.amount', 600000);
         $this->as($this->otherUmkm())->getJson("/api/v1/projects/{$open->id}/applications")->assertStatus(403);
     }
 
